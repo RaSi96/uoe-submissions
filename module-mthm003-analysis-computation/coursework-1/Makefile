@@ -11,6 +11,8 @@ PANDOC_OPTS := -f markdown+lists_without_preceding_blankline
 PANDOC_OPTS += --pdf-engine=xelatex --wrap=none --citeproc
 PANDOC_OPTS += --csl=$(CSL) --syntax-highlighting=$(SYNTAX) --include-in-header=$(HEADER)
 
+.PHONY: all clean
+
 # default target
 all: $(PDF)
 
