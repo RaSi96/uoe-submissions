@@ -1,38 +1,7 @@
 ---
-header-includes:
-  - \usepackage{float}
-  - \floatplacement{figure}{htbp}
-  - \usepackage[export]{adjustbox}
-  - \let\includegraphicsbak\includegraphics
-  - |
-    \renewcommand*{\includegraphics}[2][]{%
-      \includegraphicsbak[frame,keepaspectratio,max width=\textwidth,max height=0.9\textheight,#1]{#2}%
-    }
-  - \usepackage{needspace}
-  - \usepackage{listings}
-  - |
-    \lstset{
-      basicstyle=\ttfamily\small,
-      breaklines=true,
-      breakatwhitespace=true,
-      columns=fullflexible,
-      keepspaces=true,
-      upquote=true,
-    }
-  - \usepackage{setspace}
-  - \setstretch{1.05}
-  - \usepackage{microtype}
-  - \usepackage{amsmath,amssymb}
-  - \usepackage{needspace}
-  - \usepackage{fontspec}
-
 geometry: margin=0.75in
 fontsize: 12pt
 wrap: auto
-mainfont: "Liberation Serif"
-sansfont: "Liberation Sans"
-monofont: "Hack"
-monofontoptions: "Scale=0.6"
 listings: true
 highlight-style: pygments
 
