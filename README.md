@@ -51,3 +51,10 @@ Then, to:
     ```
 
 You can also navigate to each (sub-)directory and run `make` from there if you prefer not to do it from root-level; it's the same. Compiled PDFs will appear in their specific `module-<code>/coursework-<N>/` folder. The root-level [`Makefile`](https://github.com/RaSi96/uoe-submissions/blob/dev/Makefile) also has commented instructions how to build submission PDFs.
+
+## Statement of Academic Honesty
+As mentioned, this repo is dedicated to hosting _my_ submissions to coursework questions asked of me, during my MSc in Mathematical Finance as a student of the University of Exeter from September 2025 to September 2026. All the work here is my original work, uploaded exactly as submitted, with citations and references aligned with the University's academic standards; shared for **educational, illustrative, and reference purposes only**. Note that I only upload courseworks _after_ they have been formally graded.
+
+Just as I worked on all of this by myself, it is in the interest of all humanity and a reflection of but a modicum of common sense & integrity that future students also work on their coursework independently, and in line with their institution's academic code. This material is **not** to be adapted or submitted - either wholly, or in part - as part of any academic assessments elsewhere, as doing so would violate academic integrity principles. You, dear reader, may view, read, and learn from this material, but you may **not** republish, reuse for assessment, claim authorship, or plagiarise any part of this work. Any misuse is solely the responsibility of the individual who chooses to engage in it.
+
+For a general overview on the University of Exeter's academic integrity philosophy, please [visit this webpage](https://www.exeter.ac.uk/students/facultycases/academicconductandpractice/).
