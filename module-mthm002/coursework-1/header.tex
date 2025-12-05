@@ -1,0 +1,37 @@
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage[export]{adjustbox}
+
+% redefine \includegraphics with frame, aspect ratio, and size limits
+\let\includegraphicsbak\includegraphics
+\renewcommand*{\includegraphics}[2][]{%
+  \includegraphicsbak[
+    frame,
+    keepaspectratio,
+    max width=\textwidth,
+    max height=0.9\textheight,
+    #1
+  ]{#2}%
+}
+
+\usepackage{needspace}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  breakatwhitespace=true,
+  columns=fullflexible,
+  keepspaces=true,
+  upquote=true,
+}
+
+\usepackage{setspace}
+\setstretch{1.05}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{fontspec}
+
+% fonts
+\setmainfont{Liberation Serif}
+\setsansfont{Liberation Sans}
+\setmonofont[Scale=0.6]{Hack}

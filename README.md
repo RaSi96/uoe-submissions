@@ -5,16 +5,16 @@ This work is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licens
 
 ## Module Legend
 
-| Code                                                                                                      | Name                                            | Type     |
-| --------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | -------- |
-| [MTHM002](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM002&ay=2025&sys=1) | Methods for Stochastics and Finance             | Core     |
-| [MTHM003](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM003&ay=2025&sys=1) | Analysis and Computation for Finance            | Core     |
-| [MTHM006](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM006&ay=2025&sys=1) | Mathematical Theory of Option Pricing           | Core     |
-| [MTHM059](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM059&ay=2025&sys=1) | Case Studies in Mathematical Finance            | Core     |
-| [MTHM060](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM060&ay=2025&sys=1) | Actuarial and Mathematical Finance Dissertation | Core     |
-| [BEAM047](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM047&sys=0)         | Fundamentals of Financial Management            | Core     |
-| [BEEM012](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEEM012&sys=0)         | Applied Econometrics 2                          | Elective |
-| [BEAM035](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM035&sys=0)         | Derivatives Pricing                             | Elective |
+| Code                                                                                                      | Name                                            | Type     | CW1 | CW2 | CW3 | Final Grade |
+| --------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | -------- | --- | --- | --- | ----------- |
+| [MTHM002](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM002&ay=2025&sys=1) | Methods for Stochastics and Finance             | Core     | 90% |     |     |             |
+| [MTHM003](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM003&ay=2025&sys=1) | Analysis and Computation for Finance            | Core     | 96% |     |     |             |
+| [MTHM006](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM006&ay=2025&sys=1) | Mathematical Theory of Option Pricing           | Core     |     |     |     |             |
+| [MTHM059](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM059&ay=2025&sys=1) | Case Studies in Mathematical Finance            | Core     |     |     |     |             |
+| [MTHM060](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM060&ay=2025&sys=1) | Actuarial and Mathematical Finance Dissertation | Core     |     |     |     |             |
+| [BEAM047](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM047&sys=0)         | Fundamentals of Financial Management            | Core     |     |     |     |             |
+| [BEEM012](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEEM012&sys=0)         | Applied Econometrics 2                          | Elective |     |     |     |             |
+| [BEAM035](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM035&sys=0)         | Derivatives Pricing                             | Elective |     |     |     |             |
 
 ## How To Use
 To rebuild any submission PDFs, first clone the repo:
