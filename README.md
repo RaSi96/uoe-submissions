@@ -33,21 +33,21 @@ Then, to:
     ```bash
     $> make clean
     ```
-- Build a single coursework under a subject:
+- Build all coursework under a subject:
     ```bash
-    $> make -C module-mthm003-analysis-computation
+    $> make -C module-mthm003
     ```
 - Clean all coursework under a subject:
     ```bash
-    $> make -C module-mthm003-analysis-computation clean
+    $> make -C module-mthm003 clean
     ```
 - Build a single coursework:
     ```bash
-    $> make -C module-mthm003-analysis-computation/coursework-1
+    $> make -C module-mthm003/coursework-1
     ```
 - Clean a single coursework:
     ```bash
-    $> make -C module-mthm003-analysis-computation/coursework-1 clean
+    $> make -C module-mthm003/coursework-1 clean
     ```
 
-Compiled PDFs will appear in their specific `module-<code>/coursework_<N>/` folder. The root-level [`Makefile`](https://github.com/RaSi96/uoe-submissions/blob/dev/Makefile) also has commented instructions how to build submission PDFs.
+Compiled PDFs will appear in their specific `module-<code>/coursework-<N>/` folder. The root-level [`Makefile`](https://github.com/RaSi96/uoe-submissions/blob/dev/Makefile) also has commented instructions how to build submission PDFs.
