@@ -24,4 +24,3 @@ $(SUBJECTS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 clean: $(SUBJECTS)
-	$(MAKE) -C $(basename $@) clean
