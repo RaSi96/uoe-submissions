@@ -25,11 +25,11 @@ $> cd uoe-submissions/
 ```
 
 Then, to:
-- Build everything
+- Build everything:
     ```bash
     $> make
     ```
-- Clean everything
+- Clean everything:
     ```bash
     $> make clean
     ```
@@ -50,4 +50,4 @@ Then, to:
     $> make -C module-mthm003/coursework-1 clean
     ```
 
-Compiled PDFs will appear in their specific `module-<code>/coursework-<N>/` folder. The root-level [`Makefile`](https://github.com/RaSi96/uoe-submissions/blob/dev/Makefile) also has commented instructions how to build submission PDFs.
+You can also navigate to each (sub-)directory and run `make` from there if you prefer not to do it from root-level; it's the same. Compiled PDFs will appear in their specific `module-<code>/coursework-<N>/` folder. The root-level [`Makefile`](https://github.com/RaSi96/uoe-submissions/blob/dev/Makefile) also has commented instructions how to build submission PDFs.
