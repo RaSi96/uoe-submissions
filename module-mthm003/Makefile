@@ -8,4 +8,3 @@ $(COURSEWORKS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 clean: $(COURSEWORKS)
-	$(MAKE) -C $(basename $@) clean
