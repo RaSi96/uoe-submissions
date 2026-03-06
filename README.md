@@ -16,6 +16,10 @@ This work is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licens
 | [BEEM012](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEEM012&sys=0)         | Applied Econometrics 2                          | Elective | 93% |     |     |             |
 | [BEAM035](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM035&sys=0)         | Derivatives Pricing                             | Elective | N/A | N/A | N/A |             |
 
+Note:
+- `BEAM047` does not have any coursework, but 1 midterm(s) and 1 final.
+- `BEEM035` does not have any coursework, but 2 midterm(s) and 1 final.
+
 ## How To Use
 To rebuild any submission PDFs, first clone the repo:
 
