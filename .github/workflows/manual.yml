@@ -54,7 +54,7 @@ jobs:
       - name: Collect PDFs With Structure
         run: |
           mkdir output
-          find . \( -name "*.pdf" -o -iname "*submission*" \) -not -path "./output/*" | while read file; do
+          find . \( -name "*.pdf" -o -name "*.mp4" \) -not -path "./output/*" | while read file; do
             cp --parents "${file#./}" output/
           done
 
