@@ -16,9 +16,10 @@ This work is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licens
 | [BEEM012](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEEM012&sys=0)         | Applied Econometrics 2                          | Elective | 93% | 96% |     |             |
 | [BEAM035](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM035&sys=0)         | Derivatives Pricing                             | Elective | N/A | N/A | N/A |             |
 
-Note:
+### Notes
 - `BEAM047` does not have any coursework, but 1 midterm(s) and 1 final.
 - `BEEM035` does not have any coursework, but 2 midterm(s) and 1 final.
+- `MTHM006` official submissions requested a zip file containing, separately, a PDF (including images of handwritten notes) and source code files. This convention is redundant for GitHub, so this module's Makefiles behave identical to other modules: they just output a PDF. Source code is easily inspectable in the `.module-mthm006/coursework-*/src/` folders.
 
 ## How To Use
 To rebuild any submission PDFs, first clone the repo:

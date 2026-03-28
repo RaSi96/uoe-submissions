@@ -1,3 +1,0 @@
-# MTHM006: Mathematical Theory of Option Pricing
-
-Note that official submissions called for a zip file containing, separately, a PDF writeup (including images of handwritten notes) and source code files for inspection. Maintaining this convention is rather redundant for GitHub, so the Makefiles here behave the same as with other modules: they output a PDF. Source code is easily inspectable in the `./coursework-*/src/` folders.
