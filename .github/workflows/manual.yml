@@ -3,6 +3,8 @@ name: Build PDFs & Release
 on:
   workflow_dispatch:
   push:
+    branches:
+        - '**'
     paths:
       - '**.md'
       - '**.bib'
@@ -18,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
 
       - name: Install dependencies
         run: |
