@@ -45,6 +45,7 @@ jobs:
           fonts-hack
 
       - name: Build all PDFs
+        shell: bash -l {0}
         run: make
 
       - name: Collect PDFs (preserve structure)
