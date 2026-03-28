@@ -53,23 +53,25 @@ jobs:
 
       - name: Collect PDFs With Structure
         run: |
-          echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
           mkdir output
-          find . -name "*.pdf" | while read file; do
+          find . \( -name "*.pdf" -o -iname "*submission*" \) -not -path "./output/*" | while read file; do
             cp --parents "${file#./}" output/
           done
+
+      - name: Set date
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Create zip
         run: |
           cd output
-          zip -r ../submissions.zip .
+          zip -r ../${DATE}-submissions.zip .
 
       - name: Release
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
+          tag_name: ${{ env.DATE }}
           name: ${{ env.DATE }}-submissions.zip
-          files: submissions.zip
+          files: ${{ env.DATE }}-submissions.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
