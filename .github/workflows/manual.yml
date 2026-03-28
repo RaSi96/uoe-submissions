@@ -22,16 +22,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.2
 
-      - name: Install dependencies
+      - name: Set up Miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-variant: Miniforge3
+          auto-update-conda: true
+          activate-environment: build-env
+          environment-file: ""
+          auto-activate-base: false
+
+      - name: Install Pandoc
+        shell: bash -l {0}
+        run: |
+          conda install -y -c conda-forge pandoc==3.9
+
+      - name: Install Tex & Fonts
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-          pandoc \
           texlive-xetex texlive-latex-extra texlive-fonts-recommended \
           fonts-liberation \
           fonts-hack
 
       - name: Build all PDFs
+        shell: bash -l {0}
         run: make
 
       - name: Collect PDFs (preserve structure)

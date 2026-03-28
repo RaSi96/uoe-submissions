@@ -5,6 +5,10 @@ COURSEWORKS := $(wildcard coursework-*)
 all: $(COURSEWORKS)
 
 $(COURSEWORKS):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
+	@if [ -f $@/Makefile ]; then \
+		$(MAKE) -C $@ $(MAKECMDGOALS); \
+	else \
+		echo "Skipping $@ (no Makefile)"; \
+	fi
 
 clean: $(COURSEWORKS)
