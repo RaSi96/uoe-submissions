@@ -1,7 +1,7 @@
 # UOE Submissions
-Dedicated to my submissions & work whilst pursuing my [MSc in Mathematical Finance](https://www.exeter.ac.uk/study/postgraduate/courses/mathematics/finmathsmsc) from the Department of Mathematics at the University of Exeter, 2025-2026.
+Dedicated to my submissions & work whilst pursuing my [MSc in Mathematical Finance](https://www.exeter.ac.uk/study/postgraduate/courses/mathematics/finmathsmsc) from the Department of Mathematics at the University of Exeter, 2025-2026. This work is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en).
 
-This work is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en).
+Don't hate the integrator, hate the integrand.
 
 ## Module Legend
 
