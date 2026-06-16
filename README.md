@@ -5,21 +5,21 @@ Don't hate the integrator, hate the integrand.
 
 ## Module Legend
 
-| Code                                                                                                      | Name                                            | Type     | CW1 | CW2 | CW3 | Final Grade |
-| --------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | -------- | --- | --- | --- | ----------- |
-| [MTHM002](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM002&ay=2025&sys=1) | Methods for Stochastics and Finance             | Core     | 90% | 92% | N/A | 91%         |
-| [MTHM003](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM003&ay=2025&sys=1) | Analysis and Computation for Finance            | Core     | 96% | 87% | N/A |             |
-| [MTHM006](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM006&ay=2025&sys=1) | Mathematical Theory of Option Pricing           | Core     | 88% |     | N/A |             |
-| [MTHM059](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM059&ay=2025&sys=1) | Case Studies in Mathematical Finance            | Core     | 91% | 93% |     |             |
-| [MTHM060](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM060&ay=2025&sys=1) | Actuarial and Mathematical Finance Dissertation | Core     |     |     |     |             |
-| [BEAM047](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM047&sys=0)         | Fundamentals of Financial Management            | Core     | N/A | N/A | N/A | 75%         |
-| [BEEM012](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEEM012&sys=0)         | Applied Econometrics 2                          | Elective | 93% | 96% |     |             |
-| [BEAM035](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM035&sys=0)         | Derivatives Pricing                             | Elective | N/A | N/A | N/A |             |
+| Code                                                                                                      | Name                                            | Type     | CW1 | CW2 | CW3  | Final Grade |
+| --------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | -------- | --- | --- | ---- | ----------- |
+| [MTHM002](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM002&ay=2025&sys=1) | Methods for Stochastics and Finance             | Core     | 90% | 92% | N/A  | 91%         |
+| [MTHM003](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM003&ay=2025&sys=1) | Analysis and Computation for Finance            | Core     | 96% | 87% | N/A  | 62%         |
+| [MTHM006](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM006&ay=2025&sys=1) | Mathematical Theory of Option Pricing           | Core     | 88% | 85% | N/A  | 66%         |
+| [MTHM059](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM059&ay=2025&sys=1) | Case Studies in Mathematical Finance            | Core     | 91% | 93% |      |             |
+| [MTHM060](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM060&ay=2025&sys=1) | Actuarial and Mathematical Finance Dissertation | Core     |     |     |      |             |
+| [BEAM047](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM047&sys=0)         | Fundamentals of Financial Management            | Core     | N/A | N/A | N/A  | 75%         |
+| [BEEM012](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEEM012&sys=0)         | Applied Econometrics 2                          | Elective | 93% | 96% | 100% | 97%         |
+| [BEAM035](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM035&sys=0)         | Derivatives Pricing                             | Elective | N/A | N/A | N/A  | 92%         |
 
 ### Notes
 - `BEAM047` does not have any coursework, but 1 midterm(s) and 1 final.
 - `BEEM035` does not have any coursework, but 2 midterm(s) and 1 final.
-- `MTHM006` official submissions requested a zip file containing, separately, a PDF (including images of handwritten notes) and source code files. This convention is redundant for GitHub, so this module's Makefiles behave identical to other modules: they just output a PDF. Source code is easily inspectable in the `.module-mthm006/coursework-*/src/` folders.
+- `MTHM006` official submissions requested a zip file containing, separately, a PDF (including images of handwritten notes) and source code files. This convention is redundant for GitHub, so this module's Makefiles behave identical to other modules'. Source code is easily inspectable in the `.module-mthm006/coursework-*/src/` folders.
 
 ## How To Use
 To rebuild any submission PDFs, first clone the repo:
@@ -55,7 +55,7 @@ Then, to:
     $> make -C module-mthm003/coursework-1 clean
     ```
 
-You can also navigate to each (sub-)directory and run `make` from there if you prefer not to do it from root-level, it's the same. Compiled PDFs will appear in their specific `module-<code>/coursework-<N>/` folder. The root-level [`Makefile`](https://github.com/RaSi96/uoe-submissions/blob/dev/Makefile) also has commented instructions how to build submission PDFs.
+You can also navigate to each (sub-)directory and run `make` from there if you prefer not to do it from root-level. Compiled PDFs will appear in their specific `module-<code>/coursework-<N>/` folder. The root-level [`Makefile`](https://github.com/RaSi96/uoe-submissions/blob/dev/Makefile) also has commented instructions how to build submission PDFs.
 
 ## Statement of Academic Honesty
 As mentioned, this repo is dedicated to hosting _my_ submissions to coursework questions asked of me, during my MSc in Mathematical Finance as a student of the University of Exeter from September 2025 to September 2026. All the work here is my original work, uploaded exactly as submitted, with citations and references aligned with the University's academic standards; shared for **educational, illustrative, and reference purposes only**. Note that I only upload courseworks _after_ they have been formally graded.
