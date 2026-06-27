@@ -10,7 +10,7 @@ Don't hate the integrator, hate the integrand.
 | [MTHM002](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM002&ay=2025&sys=1) | Methods for Stochastics and Finance             | Core     | 90% | 92% | N/A  | 91%         |
 | [MTHM003](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM003&ay=2025&sys=1) | Analysis and Computation for Finance            | Core     | 96% | 87% | N/A  | 62%         |
 | [MTHM006](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM006&ay=2025&sys=1) | Mathematical Theory of Option Pricing           | Core     | 88% | 85% | N/A  | 66%         |
-| [MTHM059](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM059&ay=2025&sys=1) | Case Studies in Mathematical Finance            | Core     | 91% | 93% |      |             |
+| [MTHM059](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM059&ay=2025&sys=1) | Case Studies in Mathematical Finance            | Core     | 91% | 93% | 85%  | 89%         |
 | [MTHM060](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM060&ay=2025&sys=1) | Actuarial and Mathematical Finance Dissertation | Core     |     |     |      |             |
 | [BEAM047](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM047&sys=0)         | Fundamentals of Financial Management            | Core     | N/A | N/A | N/A  | 75%         |
 | [BEEM012](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEEM012&sys=0)         | Applied Econometrics 2                          | Elective | 93% | 96% | 100% | 97%         |

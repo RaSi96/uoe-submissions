@@ -45,7 +45,8 @@ jobs:
           sudo apt-get install -y \
           texlive-xetex texlive-latex-extra texlive-fonts-recommended \
           fonts-liberation \
-          fonts-hack
+          fonts-hack \
+          librsvg2-bin
 
       - name: Build all PDFs
         shell: bash -l {0}
