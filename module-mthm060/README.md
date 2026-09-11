@@ -7,6 +7,7 @@ With this dissertation being the exception. I discuss why in this document.
 
 ---
 
+## The use of "non-standard" script
 It was pointed out to me that the use Devanagari script for algebraic variables is, apparently, "very non-standard", and that I must "only use Greek or Roman letters" because "markers will not appreciate [the use of] characters they cannot vocalise." As such, I "MUST keep to Latin and Greek alphabet and variants", lest I "immediately lose the patience of the people grading my project if I [don't]".
 
 This is incredibly stupid. I needn't have to remind you, dear reader, that there was once a time when these "standard" scripts were non-standard, yet we, as mathematicians, evolved to inculcate them within our reasoning along with learning how to vocalise them appropriately. It may have been aeons or mere moments ago, but the fact is we learned to accommodate them. I see no reason why Devanagari ought to be sidelined this way, nor Kanji or Hobbit or otherwise, insofar as sensible design decisions have been taken to avoid collision (for example, the use of the Russian к and the Greek $\kappa$). Vocalising a certain letter from a "very non-standard" alphabet is also easily accomplished by a simple Google search, if not a [direct reference to Wikipedia](https://en.wikipedia.org/wiki/Hindi#Phonology).
@@ -23,4 +24,12 @@ If you, upon sufficient self-reflection, would categorise yourself as incredibly
 | न          | _N_          | Variation of sigma: $\varsigma$  |
 | ए          | _A_          | upsilon: $\upsilon$              |
 
+## Other reasons for an early upload
 A minor alternative reason why I've had to upload this beforehand is because there are results and code that must accompany the submission, prior to grading, simply for posterity.
+
+Yet another minor reason is that the University of Exeter explicitly requests Arial as the main font, along with specific margin requirements. Obviously I have not met the margin requirements, not the least reason for which being the density of my content. Although my formal submission was Arial, I have absolutely no intention of involving myself in licensing issues _for something as simple as a font._ Therefore, this submission is in line with all my other ones in its use of Liberation Serif and Liberation Sans as the main serif and sans serif fonts.
+
+Finally, note that with Arial as the official font (and without margin adjustments), my final page tally was an exact 50. With the Liberation set of fonts, it is as you'll see here.
+
+# Other Links
+As mentioned in my thesis, all my source data was collected by me and made available on my [Kaggle](https://www.kaggle.com/datasets/rasi96/nse-f-and-o-bhavcopies-2010-2019).

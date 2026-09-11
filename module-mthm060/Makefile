@@ -8,9 +8,9 @@ SYNTAX := standard-python.theme
 IMAGES := $(wildcard images/*)
 
 PANDOC_OPTS := -f markdown+lists_without_preceding_blankline
-PANDOC_OPTS += --pdf-engine=xelatex --wrap=none --citeproc
-PANDOC_OPTS += --csl=$(CSL) --syntax-highlighting=$(SYNTAX) --include-in-header=$(HEADER)
-PANDOC_OPTS += --filter pandoc-crossref --number-sections
+PANDOC_OPTS += --pdf-engine=xelatex --wrap=none --syntax-highlighting=$(SYNTAX)
+PANDOC_OPTS += --filter pandoc-crossref --number-sections --citeproc
+PANDOC_OPTS += --csl=$(CSL) --include-in-header=$(HEADER)
 
 .PHONY: all clean
 

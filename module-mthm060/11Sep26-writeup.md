@@ -5,8 +5,6 @@ wrap: auto
 listings: true
 highlight-style: pygments
 
-mainfont: Arial
-
 figPrefix:
   - "Figure"
   - "Figures"
@@ -22,7 +20,7 @@ tblPrefix:
 
 title: "MTHM060 Report: On Static and Dynamic Models of Implied Volatility Surfaces -- SSVI and a Neural SDE."
 author: "Rahul Singh"
-bibliography: "14Aug26-writeup.bib"
+bibliography: "11Sep26-writeup.bib"
 csl: "ieee.csl"
 link-citations: true
 ---
@@ -89,9 +87,9 @@ Harking back to the contemporary sentiment of 2019, multiple countries -- India 
 
 Against this backdrop, on 20th September 2019 and just shortly after market opening, India's Ministry of Finance announced an unexpected corporate tax rate cut (@PIBAnnouncement, @BBCAnnouncement, @BloombergAnnouncement, @CNBCAnnouncement, @FridayWindow) from the earlier 35% down to 22% (on paper), consequently foregoing ~US$15 bn in projected revenue. Such substantial fiscal intervention at a time of tightening was unprecedented; indeed, the RBI Governor had cautioned against fiscal expansion the day prior @GuvNoFiscal. @fig:TaxRatePriceAction depicts the intraday and short-term daily price action, following the announcement, on the Nifty 50 index (introduced in @sec:market_data). On identical terms, @fig:TaxRateVIX depicts the action of Nifty 50's Volatility Index (@NSEVixMethod). This is the central event to the dissertation. @sec:market_data formally introduces the Nifty 50 and discusses data collection and preprocessing in detail.
 
-![The impact of India's corporate tax rate cut announcement on the Nifty 50 equity index. Left: 15-minute (15m) resolution, right: 1-day (1D) resolution. Market opening time highlighted on the left (09:15 IST). The tape on the right ends at the onset of the 2020 COVID crash.](../supervisor-correspondence/images/24Apr26-nifty-macro-event.png){#fig:TaxRatePriceAction}
+![The impact of India's corporate tax rate cut announcement on the Nifty 50 equity index. Left: 15-minute (15m) resolution, right: 1-day (1D) resolution. Market opening time highlighted on the left (09:15 IST). The tape on the right ends at the onset of the 2020 COVID crash.](./images/24Apr26-nifty-macro-event.png){#fig:TaxRatePriceAction}
 
-![The impact of India's corporate tax rate cut announcement on India's Volatility Index (India VIX). Left: 15-minute (15m) resolution, right: 1-day (1D) resolution. Market opening time highlighted on the left (09:15 IST). The tape on the right ends at the onset of the 2020 COVID crash.](../supervisor-correspondence/images/16Aug26-nifty-macro-vix.png){#fig:TaxRateVIX}
+![The impact of India's corporate tax rate cut announcement on India's Volatility Index (India VIX). Left: 15-minute (15m) resolution, right: 1-day (1D) resolution. Market opening time highlighted on the left (09:15 IST). The tape on the right ends at the onset of the 2020 COVID crash.](./images/16Aug26-nifty-macro-vix.png){#fig:TaxRateVIX}
 
 ## Market Data and Reconstructing Implied Volatility {#sec:market_data}
 In @sec:tax_cut we established the dissertation's market event of interest. This section formally introduces the Nifty 50 index and subsequently describes the construction of its options dataset.
@@ -152,7 +150,7 @@ $$ k = \ln\left(\frac{K}{F_T}\right) $$
 
 With $k<0$ for OTM puts and $k>0$ for OTM calls. The combination of OTM call and put IVs for a certain day and along $k$, yields an IV smile. @fig:NiftySampleEmpiricalSmiles demonstrates some empirical samples. @sec:ssvi next examines SSVI with regards to these empirical smiles. Note that fixing $r=10\%$, as per NSE guidance, is a deliberate design choice for this dissertation only. Practically speaking, the contemporaneous risk-free discount curve, or its corresponding zero/forward-rate representation where required, would be used instead.
 
-![Sample empirical IV smiles for the 2nd week in September 2019, from 09th September 2019 to 13th September 2019. Each row corresponds to one day, each column corresponds to a specific weekly expiry in October 2019. $x$-axis is log-forward-moneyness, $y$-axis is implied volatility. One smile is formed by plotting empirical OTM CE and PE IVs together, with empty boxes indicating no strikes were traded on that day. This illustrates that smiles evolve as liquidity develops, and that empirical implied volatility is neither smooth, nor guarantees arbitrage-free prices.](../supervisor-correspondence/images/24Apr26-nifty-sample-smiles.png){#fig:NiftySampleEmpiricalSmiles}
+![Sample empirical IV smiles for the 2nd week in September 2019, from 09th September 2019 to 13th September 2019. Each row corresponds to one day, each column corresponds to a specific weekly expiry in October 2019. $x$-axis is log-forward-moneyness, $y$-axis is implied volatility. One smile is formed by plotting empirical OTM CE and PE IVs together, with empty boxes indicating no strikes were traded on that day. This illustrates that smiles evolve as liquidity develops, and that empirical implied volatility is neither smooth, nor guarantees arbitrage-free prices.](./images/24Apr26-nifty-sample-smiles.png){#fig:NiftySampleEmpiricalSmiles}
 
 # Methodology {#sec:methodology}
 ## (Surface) Stochastic Volatility Inspired {#sec:ssvi}
@@ -231,9 +229,9 @@ With an understanding of arbitrage established, there are two transformations ce
 
 These representations are dimensionless, express term structure through accumulated variance over time, and make static arbitrage derivations tractable. To demonstrate the difference between implied volatility and total implied variance, @fig:IVCurvesTWP and @fig:IVarCurvesTWP depict the daily evolution of each over the business week from 16th to 25th September 2019. Interestingly, near-expiry total variance curves must theoretically be lower than the far-expiries without intersecting, because intersections suggest arbitrage opportunities. The market announcement apparently triggered many intersections, suggesting a large number of mispricings occurred during the fallout.
 
-![Implied volatility curves of the five October 2019 weekly expiries, aggregated per day in September 2019. The grey line corresponds to a phase-aligned average, where $k$ acts as the phase-space. The $x$-axis is log-forward-moneyness, the $y$-axis is implied volatility $\sigma_{\text{B76}}$.](../supervisor-correspondence/images/25Aug26-implied-vol-curves-twp.png){#fig:IVCurvesTWP}
+![Implied volatility curves of the five October 2019 weekly expiries, aggregated per day in September 2019. The grey line corresponds to a phase-aligned average, where $k$ acts as the phase-space. The $x$-axis is log-forward-moneyness, the $y$-axis is implied volatility $\sigma_{\text{B76}}$.](./images/25Aug26-implied-vol-curves-twp.png){#fig:IVCurvesTWP}
 
-![Total implied variance curves of the five October 2019 weekly expiries, aggregated per day in September 2019. The grey line corresponds to a phase-aligned average, where $k$ acts as the phase-space. The $x$-axis is log-forward-moneyness, the $y$-axis is total implied variance $\sigma_{\text{B76}}^2\tau$.](../supervisor-correspondence/images/25Aug26-implied-var-curves-twp.png){#fig:IVarCurvesTWP}
+![Total implied variance curves of the five October 2019 weekly expiries, aggregated per day in September 2019. The grey line corresponds to a phase-aligned average, where $k$ acts as the phase-space. The $x$-axis is log-forward-moneyness, the $y$-axis is total implied variance $\sigma_{\text{B76}}^2\tau$.](./images/25Aug26-implied-var-curves-twp.png){#fig:IVarCurvesTWP}
 
 The grey dashed-dotted line is the phase-aligned average of all the days' IV smiles, computed using an implementation @RasiTWP of Time Warp Profile (TWP) averaging by Sioros and Nymoen (2021) @TWPAveraging: a conventional pointwise average of all smiles implicitly assumes that features like skew and ATM curvature occur at identical values of $k$, which is untrue. TWP uses Dynamic Time Warping to decouple differences in amplitude from local phase before constructing the mean curve, resulting in a phase-aligned average between samples that need not be the same length. The phase variable is $k$ rather than chronological time.
 
@@ -487,14 +485,14 @@ $$ \rho \in (-1, 1), \qquad \eta \in (10^{-6}, 5), \qquad \gamma \in (10^{-6}, 1
 
 The numerical condition at $\tau=0$ (since daily data is collected after market close) is $\theta_0:=\lim_{\tau\to 0} \theta_t=0$, because an ATM option at expiry has no value. During fitting, data records for options that have expired on the day being fit to have simply been filtered out. @fig:SSVIsurfaceWindow showcases full SSVI IV surfaces. As with individual smiles, surface-level skew inversion is apparent. Because SSVI is calibrated independently for each day, it captures the swing in skew instantaneously. However, it is purely cross-sectional and imposes no evolutionary law on volatility surfaces. This latter, complementary problem is addressed by FuNVol.
 
-![SSVI surfaces surrounding the 2019 macro event. Red dots represent individually parameterised SSVI smiles, placed to gauge surface fit. Intervening points have been linearly interpolated.](../supervisor-correspondence/images/25Aug26-ssvi-surfaces-window.png){#fig:SSVIsurfaceWindow}
+![SSVI surfaces surrounding the 2019 macro event. Red dots represent individually parameterised SSVI smiles, placed to gauge surface fit. Intervening points have been linearly interpolated.](./images/25Aug26-ssvi-surfaces-window.png){#fig:SSVIsurfaceWindow}
 
 Finally, @fig:SSVIparams showcases SSVI parameters fit to individual October expiries, for days in September. The last box is a $25\Delta$ Risk Reversal metric:
 $$ \text{RR}_{\Delta}(x) = \sigma^{\text{CE}}_{x\Delta} - \sigma^{\text{PE}}_{x\Delta} $$
 
 Recall that $\Delta<0$ for puts, $\Delta>0$ for calls, and where $\sigma$ denotes any measure of volatility. for $|\text{RR}|$ to increase, one side of the option chain must carry higher volatility than the other side. $\text{RR}$ has been measured only with SSVI's parameterised smile because empirical IV smiles are prone to sampling noise. Inferring behaviour of $\eta, \gamma$ over the 30 day sample size isn't statistically rigorous, however we can observe a nonrandom drop in $\rho$ and a corresponding increase in the $25\Delta$ RR exactly on the day of the announcement. Addressing a possible contradiction: SSVI mightn't assume time-dependent parameters over days; we are visualising each day's distinct parameter set.
 
-![SSVI parameters $(\rho, \eta, \gamma)$ and the $25\Delta$ RR plotted over September 2019. $\rho$ controls smile skew, $\eta$ controls overall level, and $\gamma$ controls ATM curvature. $25\Delta$ RR is the difference between the implied volatility of $25\Delta$ call- and put options; a measure of smileness, computed with SSVI parameterised smiles.](../supervisor-correspondence/images/25Aug26-ssvi-params.png){#fig:SSVIparams}
+![SSVI parameters $(\rho, \eta, \gamma)$ and the $25\Delta$ RR plotted over September 2019. $\rho$ controls smile skew, $\eta$ controls overall level, and $\gamma$ controls ATM curvature. $25\Delta$ RR is the difference between the implied volatility of $25\Delta$ call- and put options; a measure of smileness, computed with SSVI parameterised smiles.](./images/25Aug26-ssvi-params.png){#fig:SSVIparams}
 
 ## Functional Volatility Modelling {#sec:funvol_start}
 In @sec:tax_cut we established the dissertation's market event of interest. In @sec:market_data we described the construction of this dissertation's dataset. In @sec:ssvi we studied SSVI. This section investigates FuNVol, our tool for modelling the evolution of IV surfaces.
@@ -572,7 +570,7 @@ $$ \sigma_{\text{OM}}^C(\Delta_{\text{CE}}, \tau), \qquad \sigma_{\text{OM}}^P(\
 Denote the sequences of historical OM implied volatility call- and put-side subsurfaces respectively, and please let $\sigma_{\text{OM}}(\Delta, \tau)$ without superscript denote a generic OM IV surface. Effecting OM's methodology over the period of data described in @sec:market_data results in $2,409$ daily surfaces. @fig:OMetricsWindow depicts a collection of these, which exhibit similar behaviour to SSVI surfaces, especially the skew inversion on 20th September 2019. This addresses an important, implicit assumption: the macro event is, indeed, captured by OM's methodology; if this were not the case, the downstream neural SDE would effectively have modelled nothing of interest. This also shows that the macro event isn't model-implied.
 
 \FloatBarrier
-![Nifty 50 IV surfaces created using OptionMetrics' Gaussian KDE methodology. Note the separate surfaces for calls ($\Delta>0$) and puts ($\Delta<0$).](../supervisor-correspondence/images/29Aug26-ometrics-surfaces-window.png){#fig:OMetricsWindow}
+![Nifty 50 IV surfaces created using OptionMetrics' Gaussian KDE methodology. Note the separate surfaces for calls ($\Delta>0$) and puts ($\Delta<0$).](./images/29Aug26-ometrics-surfaces-window.png){#fig:OMetricsWindow}
 
 ### Functional Data Projection {#sec:fda_projection}
 From @sec:optionmetrics we obtain a discrete dataset of IV surfaces $\sigma_{\text{OM}}$. Following the theory in @FuNVol §2, we now represent them in continuous-space using Legendre polynomials as a basis, and subsequently apply functional principal component analysis (FPCA) to decorrelate dynamics. For a formal theoretical background on functional data projection other than @FuNVol §2, please see @JaneWang or @Kokoza. Guided by @FuNVol §5.1, since Legendre polynomial orthogonality $\langle L_n, L_m\rangle=\delta_{mn}$ is only defined over $L^2[-1, 1]$, each sub-surface's axes must first be transformed to fully lie within this interval. Following the transformations in @FuNVol, §5.1:
@@ -597,22 +595,22 @@ $$ \mathbf{R}\widehat{\mathbf{A}}^{\top} = \mathbf{Q}^{\top}\text{स} $$
 
 Where each row $\mathbf{a}_t\in\widehat{\mathbf{A}}^{T\times 15}$ is a 15-element vector of projection coefficients for a day's IV surface. Call- and put-side coefficient matrices are henceforth denoted by $\widehat{\mathbf{A}}^C$ and $\widehat{\mathbf{A}}^P$ respectively, with $\widehat{\mathbf{A}}$ denoting the generic matrix. @fig:LpolysCoeffsAll plots $\widehat{\mathbf{A}}$ over the full dataset, with major Indian macroeconomic events highlighted.
 
-![Time series $\mathbf{a}_t\in\widehat{\mathbf{A}}^{T\times 15}$, where $\mathbf{a}_t$ is one set of Legendre projection coefficients at time $t$. Top: panel of coefficients obtained from projecting the time series of call-side OM IV surfaces onto Legendre polynomials. Bottom: panel of put-side projection coefficients.](../supervisor-correspondence/images/30Aug26-Lpolys-coeffs-all.png){#fig:LpolysCoeffsAll}
+![Time series $\mathbf{a}_t\in\widehat{\mathbf{A}}^{T\times 15}$, where $\mathbf{a}_t$ is one set of Legendre projection coefficients at time $t$. Top: panel of coefficients obtained from projecting the time series of call-side OM IV surfaces onto Legendre polynomials. Bottom: panel of put-side projection coefficients.](./images/30Aug26-Lpolys-coeffs-all.png){#fig:LpolysCoeffsAll}
 
 Of note is that $\kappa(\widehat{\mathbf{A}}^C)\approx 90.84,\; \kappa(\widehat{\mathbf{A}}^P)\approx 224.80$ suggesting high collinearity. @fig:lpolys_vifs depicts the Variance Inflation Factor (VIF) of each basis function in $\widehat{\mathbf{A}}^{C, P}$. To decorrelate these features, we resort to FPCA. Please let $\mathbf{X}^{-\mu}$ denote a mean-centred $\widehat{\mathbf{A}}$; then, its sample covariance matrix is
 $$ \frac{{\mathbf X^{-\mu}}^\top\mathbf X^{-\mu}}{T-1} $$
 
-![Variance Inflation Factors (VIFs) of call- and put-side Legendre projection coefficient matrices, $\widehat{\mathbf{A}}^{C, P}$, on a shared scale. Both sides are collinear, the put-side moreso.](../supervisor-correspondence/images/06Sep26-lpolys-vifs.png){#fig:lpolys_vifs}
+![Variance Inflation Factors (VIFs) of call- and put-side Legendre projection coefficient matrices, $\widehat{\mathbf{A}}^{C, P}$, on a shared scale. Both sides are collinear, the put-side moreso.](./images/06Sep26-lpolys-vifs.png){#fig:lpolys_vifs}
 
 Which we eigendecompose into eigenvalues $\mathbf{e}_X$ and eigenvectors $V_X$. Retaining the smallest number of components explaining at least $99.5%$ of the variance gives $M=12$ components for calls and $M=11$ for puts. Mapping the corresponding eigenvectors back through the Legendre basis produces the eigensurfaces shown in @fig:CallsEigensurfaces and @fig:PutsEigensurfaces.
 
-![The 12 largest call-side eigensurfaces explaining at least 99.5% of IV surface variance. As in @FuNVol Fig. 3, the first couple eigensurfaces correspond to implied volatility level whilst the rest correspond to convexity and various skews and twists.](../supervisor-correspondence/images/31Aug26-calls-eigensurfaces.png){#fig:CallsEigensurfaces}
+![The 12 largest call-side eigensurfaces explaining at least 99.5% of IV surface variance. As in @FuNVol Fig. 3, the first couple eigensurfaces correspond to implied volatility level whilst the rest correspond to convexity and various skews and twists.](./images/31Aug26-calls-eigensurfaces.png){#fig:CallsEigensurfaces}
 
-![The 11 largest put-side eigensurfaces explaining at least 99.5% of IV surface variance. As in @FuNVol Fig. 3, the first couple eigensurfaces correspond to implied volatility level whilst the rest correspond to convexity and various skews and twists.](../supervisor-correspondence/images/31Aug26-puts-eigensurfaces.png){#fig:PutsEigensurfaces}
+![The 11 largest put-side eigensurfaces explaining at least 99.5% of IV surface variance. As in @FuNVol Fig. 3, the first couple eigensurfaces correspond to implied volatility level whilst the rest correspond to convexity and various skews and twists.](./images/31Aug26-puts-eigensurfaces.png){#fig:PutsEigensurfaces}
 
 The FPCC matrix is denoted $\Xi=\mathbf X^{-\mu}V_X$, with $\Xi^C$ and $\Xi^P$ for the call- and put-side matrices respectively, and $\Xi$ the generic matrix. @fig:FPCCsWindow zooms into the period around the macro event, showing that the announcement's impact is palpable. Finally, $\kappa(\Xi^C)\approx 13.43,\; \kappa(\Xi^P)\approx 10.96$ providing no evidence of ill-conditioning.
 
-![Time series of FPCCs $\Xi$ around 20th September 2019. Top: calls, bottom: puts.](../supervisor-correspondence/images/01Sep26-fpccs-window.png){#fig:FPCCsWindow}
+![Time series of FPCCs $\Xi$ around 20th September 2019. Top: calls, bottom: puts.](./images/01Sep26-fpccs-window.png){#fig:FPCCsWindow}
 
 Some basic time series analyses of $\Xi$ and $d\Xi$ are warranted. Specifically, we inspect stationarity and serial correlation in @sec:fpcc_autocorrel, tail behaviour and quantile-quantile (QQ) comparisons @sec:fpcc_tails, and a rolling singular value spectrum in @sec:fpcc_spectrum.
 
@@ -624,9 +622,9 @@ Augmented Dickey-Fuller (ADF) tests @ADFTest are used to test for stationarity o
 ### Tail Analysis {#sec:fpcc_tails}
 Coming to tail behaviour, In discussing Figure 8 of @FuNVol, Choudhary et al. identify small but systematic spikes at the extremes of the neural SDE's Gaussian PITs, indicating insufficient tail weight in the model. They suggest that this may arise from the neural SDE's Brownian forcing. Anderson-Darling tests and Gaussian quantile-quantile (QQ) plots similarly reject Gaussianity for $d\Xi$. A common heavier-tailed benchmark is Student's $t$-distribution, however @fig:NeuralCEStudentT and @fig:NeuralPEStudentT show that most interestingly, $d\Xi$ exhibits lighter-than-$t$ tails. Naturally, some tail analysis is warranted.
 
-![Quantile-Quantile plots of $d\Xi^C$ vs. a fitted Student's $t$-distribution, call-side.](../supervisor-correspondence/images/02Sep26-QQ-neural_ce-StudentT.png){#fig:NeuralCEStudentT}
+![Quantile-Quantile plots of $d\Xi^C$ vs. a fitted Student's $t$-distribution, call-side.](./images/02Sep26-QQ-neural_ce-StudentT.png){#fig:NeuralCEStudentT}
 
-![Quantile-Quantile plots of $d\Xi^P$ vs. a fitted Student's $t$-distribution, put-side.](../supervisor-correspondence/images/02Sep26-QQ-neural_pe-StudentT.png){#fig:NeuralPEStudentT}
+![Quantile-Quantile plots of $d\Xi^P$ vs. a fitted Student's $t$-distribution, put-side.](./images/02Sep26-QQ-neural_pe-StudentT.png){#fig:NeuralPEStudentT}
 
 Considering Gaussian asymptotics for a single random variable $X\sim\mathcal{N}(\mu,\, \sigma)$ with $z:=\frac{x-\mu}{\sigma\sqrt{2}}$, we can write:
 $$
@@ -712,9 +710,9 @@ It must be appreciated that there is something rather pleasing about hyperbolae 
 
 <!-- look at $-\frac{x^2}{2}$, $-\frac32\ln(x)-2x$, and $-2\ln(x)$ on Desmos! middle is NIG. also for variance gamma: $\ln(|x|^{l-1}e^{-a|x|})$ with $l=1, a=1$ -->
 
-![Quantile-Quantile plots of $d\Xi^C$ vs. a fitted Normal Inverse Gaussian distribution, call-side.](../supervisor-correspondence/images/04Sep26-QQ-neural_ce-NIG-better.png){#fig:NeuralCENIG}
+![Quantile-Quantile plots of $d\Xi^C$ vs. a fitted Normal Inverse Gaussian distribution, call-side.](./images/04Sep26-QQ-neural_ce-NIG-better.png){#fig:NeuralCENIG}
 
-![Quantile-Quantile plots of $d\Xi^P$ vs. a fitted Normal Inverse Gaussian distribution, put-side.](../supervisor-correspondence/images/04Sep26-QQ-neural_pe-NIG-better.png){#fig:NeuralPENIG}
+![Quantile-Quantile plots of $d\Xi^P$ vs. a fitted Normal Inverse Gaussian distribution, put-side.](./images/04Sep26-QQ-neural_pe-NIG-better.png){#fig:NeuralPENIG}
 
 ### Rolling Singular-Value Spectra {#sec:fpcc_spectrum}
 Here we inspect the singular value spectrum of $d\Xi$ over rolling monthly windows. Inspired by the work of @Bouchaud and @Ipsen, the stable rank of a matrix is computed as:
@@ -722,7 +720,7 @@ $$ \operatorname{sr}(\mathbf{A}) = \frac{||\mathbf{A}||^2_F}{||\mathbf{A}||_2^2}
 
 Where $||\mathbf{A}||^2_F$ is the Frobenius norm of matrix $\mathbf{A}$, and $\text{ए}$ are the singular values of $\mathbf{A}$. Stable rank is bounded between $1\le \operatorname{sr}(\mathbf{A})\le \operatorname{rank}(\mathbf{A})$: if a matrix has one dominant singular value -- indicating low-dimensional dynamics -- $\operatorname{rank}(\mathbf{A})$ might still be full whilst $\operatorname{sr}(\mathbf{A})$ will collapse toward 1. $\operatorname{sr}(d\Xi)$ is computed over rolling 30-observation windows with stride one, denoted `[30::1]`, and subsequently mean-aggregate the resulting series over 15-day periods. This retains the granularity of the stride-one calculation relative to directly using `[30::15]` windows. The Nifty Volatility Index (VIX) is aggregated identically. @fig:sr_all showcases call- and put-side stable ranks alongside the VIX.
 
-![$\operatorname{sr}(d\Xi)$ over time: call-side stable rank on top, put-side in the middle; and aggregated Nifty VIX on the bottom.](../supervisor-correspondence/images/05Sep26-stable-rank-all.png){#fig:sr_all}
+![$\operatorname{sr}(d\Xi)$ over time: call-side stable rank on top, put-side in the middle; and aggregated Nifty VIX on the bottom.](./images/05Sep26-stable-rank-all.png){#fig:sr_all}
 
 Peaks in VIX tend to coincide with declines in $\operatorname{sr}(d\Xi)$ whilst calmer periods tend to exhibit higher stable rank. More strikingly, although the retained FPCC representations have $M=12$ call- and $M=11$ put-side components, every rolling window has full algebraic rank whilst the maximum observed stable rank is only approximately $3.0$ and $2.8$ respectively. The apparent dimensionality of surface FPCC dynamics is dramatically lower than that required to represent the surfaces up to 99.5% variance. A potential direction for future research could investigate the relationship between the effective dimensionality of FPCC dynamics and their autoregressive (AR) structure: for example, high-volatility regimes may correspond to lower-order, highly persistent dynamics, whilst calmer periods may support richer AR($p$) structure.
 
@@ -850,9 +848,9 @@ Training on an AMD RX 5600X completes in under 15 minutes; on a CPU, under 25. F
 
 @fig:weight_spectra_calls and @fig:weight_spectra_puts showcase the trained layers' singular value histograms, inspired by WeightWatcher @WeightWatcherTheory, SETOL @SETOL. Power law fits to the tail of spectra are infeasible due to the low number of singular values. The collapse in drift dimension is palpable, and clearly suggests overparameterisation. The deeper diffusion histograms concentrate, but not as severely as the drift. Put-side is visibly more concentrated than call-side, echoing the finding in @sec:fpcc_spectrum.
 
-![Histogram of singular values for call-side weight matrices. There are 6 matrices per GRU: `ih` is an input-to-hidden layer, `hh` is a hidden-to-hidden layer; `l0` is the layer closest to the dataset and `l2` is the deepest layer. `linear` is the final linear layer of each subnet.](../supervisor-correspondence/images/08Sep26-nsde-calls-weight-spectrum.png){#fig:weight_spectra_calls}
+![Histogram of singular values for call-side weight matrices. There are 6 matrices per GRU: `ih` is an input-to-hidden layer, `hh` is a hidden-to-hidden layer; `l0` is the layer closest to the dataset and `l2` is the deepest layer. `linear` is the final linear layer of each subnet.](./images/08Sep26-nsde-calls-weight-spectrum.png){#fig:weight_spectra_calls}
 
-![Histogram of singular values for put-side weight matrices. There are 6 matrices per GRU: `ih` is an input-to-hidden layer, `hh` is a hidden-to-hidden layer; `l0` is the layer closest to the dataset and `l2` is the deepest layer. `linear` is the final linear layer of each subnet.](../supervisor-correspondence/images/08Sep26-nsde-puts-weight-spectrum.png){#fig:weight_spectra_puts}
+![Histogram of singular values for put-side weight matrices. There are 6 matrices per GRU: `ih` is an input-to-hidden layer, `hh` is a hidden-to-hidden layer; `l0` is the layer closest to the dataset and `l2` is the deepest layer. `linear` is the final linear layer of each subnet.](./images/08Sep26-nsde-puts-weight-spectrum.png){#fig:weight_spectra_puts}
 
 ## Linear Stability Analysis {#sec:lsa}
 In @FuNVol §3.3, Choudhary et al. state that they generate future IV surfaces by recursively applying the one-step transition $\hat{\text{न}}_{t+1}\mid\mathcal{F}_t\sim\mathcal{N}(\hat{\text{न}}_t+\hat{\mu}_t\,\delta t,\;\hat{\Sigma}_t\,\delta_t)$ by sampling from a multivariate normal.
@@ -868,9 +866,9 @@ $$
 
 For all features $m\in M$ (as explained in @sec:fda_projection). We discount evaluating Nifty's stability because our interest is specifically concerned with FPCCs and surface behaviour. @fig:lsa_calls_DeltaNorm and @fig:lsa_puts_DeltaNorm depict the batch- and feature-wise 2-norm of $\delta_{m,n}$, specifically $\lvert|\chi^{\delta}|\rvert_2$, as a function of $h$. Call-side separation emerges after $h>\approx10$ timesteps ahead. Put-side separation emerges after $h>\approx3$, though a threshold of $\approx9$ is also acceptable. Difference between magnitudes notwithstanding, this suggests that short-$h$ forecasts are relatively robust to small perturbations. The difference between magnitudes suggests put-side long-$h$ forecasts are an order more stable than call-side, assuming no misspecification. Finally, over the tested 20-day horizon the empirical magnitude $|\lambda_m(t)|\to0$ for each FPCC.
 
-![Degree of separation between perturbed forward trajectories vs. reference trajectory, calls.](../supervisor-correspondence/images/08Sep26-nsde-lsa-calls-DeltaNorm.png){#fig:lsa_calls_DeltaNorm}
+![Degree of separation between perturbed forward trajectories vs. reference trajectory, calls.](./images/08Sep26-nsde-lsa-calls-DeltaNorm.png){#fig:lsa_calls_DeltaNorm}
 
-![Degree of separation between perturbed forward trajectories vs. reference trajectory, puts.](../supervisor-correspondence/images/08Sep26-nsde-lsa-puts-DeltaNorm.png){#fig:lsa_puts_DeltaNorm}
+![Degree of separation between perturbed forward trajectories vs. reference trajectory, puts.](./images/08Sep26-nsde-lsa-puts-DeltaNorm.png){#fig:lsa_puts_DeltaNorm}
 
 ## Drift Analysis {#sec:drift_analysis_ar1}
 Now we employ teacher-forcing (discussed in @sec:lsa) and disable the diffusion component. Given the findings of @sec:training_outcomes, it is natural to compare the neural drift with a naive $\operatorname{ARX}(1)$ model:
@@ -902,20 +900,20 @@ Table: Root Mean Square Error of each FPCC, call- and put-side, predicted recurs
 
 The average call- and put-side $\operatorname{ARX}(1)$ RMSEs are $\approx0.0253$ and $\approx0.0296$, and $\approx0.0302$ and $\approx0.0301$ for the corresponding neural drifts. It would seem that in general, $\operatorname{ARX}(1)$ performs competently on RMSE; however, @fig:neural_arx_recursive_norms appears as though the neural drift has captured richer recursive dynamics than $\operatorname{ARX}(1)$, with a noticeable "blip" around event time as if the model has absorbed the macro event of interest. RMSE is thus perhaps insufficient to portray the value of learned dynamics, and that there is some benefit to the expressive power of neural parameterisation. This dichotomy matters in practice, because waiting for the next observation merely to produce a one-step-ahead forecast is a nonactivity of professional options desks.
 
-![Recursive forecast trajectory feature-wise 2-norms for neural drift and $\operatorname{ARX}(1)$ models over the announcement period. Each trajectory is the norm of recursively-forecasted FPCCs.](../supervisor-correspondence/images/09Sep26-recursive-norms-neural-arx.png){#fig:neural_arx_recursive_norms}
+![Recursive forecast trajectory feature-wise 2-norms for neural drift and $\operatorname{ARX}(1)$ models over the announcement period. Each trajectory is the norm of recursively-forecasted FPCCs.](./images/09Sep26-recursive-norms-neural-arx.png){#fig:neural_arx_recursive_norms}
 
 In light of these results, we also consider how predicted trajectories behave as we approach the date of the event. @fig:event_horizons_neural and @fig:event_horizons_arx show the feature-wise 2-norm trajectories of recursive forecasts from the neural drift and $\operatorname{ARX}(1)$, as we approach the event's horizon. The rolling lookback period $t_{0-\ell}$, as established in @sec:dataloader, contains the event for trajectories starting on 20 and 23 September 2019, but the models are not retrained with, or following, the event. The call-side neural trajectory starting on 20 September 2019 (gold) has a very large affine offset, and the equivalent put-side trajectory exhibits the largest growth. 23 September 2019 (cyan), the next business day after the event, is more volatile on both call and put sides. In contrast, $\operatorname{ARX}(1)$ trajectories demonstrate no such behaviour, which provides further evidence that the neural drift parameterisation captures state-dependent dynamics absent from an $\operatorname{ARX}(1)$ specification, or from RMSE as a loss quantifier.
 
-![Recursive neural forecast trajectory feature-wise 2-norms, generated with each $t_0$ closing in on the event's horizon. Left: calls. Right: puts. Each box contains 6 trajectories.](../supervisor-correspondence/images/10Sep26-rolling-rec-fcasts-eventhorizon.png){#fig:event_horizons_neural}
+![Recursive neural forecast trajectory feature-wise 2-norms, generated with each $t_0$ closing in on the event's horizon. Left: calls. Right: puts. Each box contains 6 trajectories.](./images/10Sep26-rolling-rec-fcasts-eventhorizon.png){#fig:event_horizons_neural}
 
-![Recursive $\operatorname{ARX}(1)$ forecast trajectory feature-wise 2-norms, generated with each $t_0$ closing in on the event's horizon. Left: calls. Right: puts. Each box contains 6 trajectories.](../supervisor-correspondence/images/10Sep26-rolling-rec-AR1-fcasts-eventhorizon.png){#fig:event_horizons_arx}
+![Recursive $\operatorname{ARX}(1)$ forecast trajectory feature-wise 2-norms, generated with each $t_0$ closing in on the event's horizon. Left: calls. Right: puts. Each box contains 6 trajectories.](./images/10Sep26-rolling-rec-AR1-fcasts-eventhorizon.png){#fig:event_horizons_arx}
 
 ## Diffusion Analysis {#sec:diffusion_analysis_garch}
 We simulate 750 level paths (i.e. we run 750 forward passes) over the test horizon (@sec:dataloader discusses constructing the test set) to obtain $\hat{X}\in\mathbb{R}^{750\times h\times M}$ that we difference and pool into $d\hat{X}\in\mathbb{R}^{750h\times M}$. As mentioned in @sec:lsa, we discount evaluating Nifty's estimated diffusion because our interest is specifically concerned with FPCCs and surface behaviour. @fig:simdX_empirical_qq_calls and @fig:simdX_empirical_qq_puts show evidence that $d\hat{X}$ misses ever-so-slightly the empirical tails.
 
-![QQ plots of neural vs. empirical FPCC increments $d\Xi$, call-side.](../supervisor-correspondence/images/08Sep26-nsde-simdX-vs-empirical-quantiles-calls.png){#fig:simdX_empirical_qq_calls}
+![QQ plots of neural vs. empirical FPCC increments $d\Xi$, call-side.](./images/08Sep26-nsde-simdX-vs-empirical-quantiles-calls.png){#fig:simdX_empirical_qq_calls}
 
-![QQ plots of neural vs. empirical FPCC increments $d\Xi$, put-side.](../supervisor-correspondence/images/08Sep26-nsde-simdX-vs-empirical-quantiles-puts.png){#fig:simdX_empirical_qq_puts}
+![QQ plots of neural vs. empirical FPCC increments $d\Xi$, put-side.](./images/08Sep26-nsde-simdX-vs-empirical-quantiles-puts.png){#fig:simdX_empirical_qq_puts}
 
 QQ plots of $d\hat{X}$ versus a Gaussian and Student's $t$, on the other hand, show that the neural diffusion has captured the heavier-than-Gaussian, lighter-than-$t$ behaviour discussed in @sec:fpcc_tails. The tail misses matter because as mentioned in @sec:fda_projection, our macro announcement lies in the tails. @tbl:announcement_ranks shows the empirical percentiles of $d\Xi$ for 20 September 2019, calculated over the entire test set.
 
@@ -951,9 +949,9 @@ Where $Y_t\sim\operatorname{ARX}(1)$ as in @sec:drift_analysis_ar1, $\sigma_t^2$
 ## Surface Reconstruction {#sec:surface_reconstruct}
 Our last comparison, but certainly not the least, is between surfaces. We generate 250 surface paths, teacher-forced and recursive, holding $t_0$ fixed (unlike in @sec:drift_analysis_ar1). @fig:tf_surfacegen and @fig:rec_surfacegen showcase the average surface with other sampled surfaces as a ghastly aura.
 
-![Teacher-forced Monte Carlo forecast paths (translucent) and their pointwise mean surface (opaque). Orange: puts ($\Delta<0$), blue: calls ($\Delta>0$).](../supervisor-correspondence/images/09Sep26-teacher-forced-surfacegen.png){#fig:tf_surfacegen}
+![Teacher-forced Monte Carlo forecast paths (translucent) and their pointwise mean surface (opaque). Orange: puts ($\Delta<0$), blue: calls ($\Delta>0$).](./images/09Sep26-teacher-forced-surfacegen.png){#fig:tf_surfacegen}
 
-![Recursively generated Monte Carlo forecast paths (translucent) and their pointwise mean surface (opaque). Orange: puts ($\Delta<0$), blue: calls ($\Delta>0$).](../supervisor-correspondence/images/09Sep26-recursive-surfacegen.png){#fig:rec_surfacegen}
+![Recursively generated Monte Carlo forecast paths (translucent) and their pointwise mean surface (opaque). Orange: puts ($\Delta<0$), blue: calls ($\Delta>0$).](./images/09Sep26-recursive-surfacegen.png){#fig:rec_surfacegen}
 
 Teacher-forced surfaces demonstrate some apparent call-side skew on 20 September 2019 and beyond, whilst recursively generated surfaces don't exhibit any kind of apparent evolution.
 
