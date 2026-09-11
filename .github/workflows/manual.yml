@@ -39,6 +39,11 @@ jobs:
         run: |
           conda install -y -c conda-forge pandoc==3.9
 
+      - name: Install pandoc-crossref
+        shell: bash -l {0}
+        run: |
+          conda install -y -c conda-forge pandoc-crossref==0.3.24
+
       - name: Install Tex & Fonts
         run: |
           sudo apt-get update
