@@ -64,4 +64,4 @@ Just as I worked on all of this by myself, it is in the interest of all humanity
 
 For a general overview on the University of Exeter's academic integrity philosophy, please [visit this webpage](https://www.exeter.ac.uk/students/facultycases/academicconductandpractice/).
 
-<sup>†</sup> The exception to this is my dissertation, under the MTHM060 folder. Please see its README.md for an explanation of why.
+<sup>†</sup> The exception to this is my dissertation, under the [MTHM060 folder](https://github.com/RaSi96/uoe-submissions/tree/dev/module-mthm060). Please see its [README.md](https://github.com/RaSi96/uoe-submissions/tree/dev/module-mthm060#readme) for an explanation of why.
