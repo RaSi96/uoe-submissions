@@ -98,7 +98,7 @@ def prepare_underlying(
 
 def get_file_list(basedir: Path|str) -> list:
     """
-    Returns a list of all files in `basedir` that end in "*bhav.csv".
+    Returns a list of all files in `basedir` that end with "*bhav.csv".
 
     Parameters:
     `basedir`: Path|str:
