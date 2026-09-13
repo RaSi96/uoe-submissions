@@ -1,19 +1,18 @@
+from argparse import ArgumentParser
+from pathlib import Path
+
 import logging
 import pandas as pd
 
 from datetime import datetime
 from typing import Iterable
 
-from .bhav_processing import *
-from .black_scholes import *
+from bhav_processing import *
+from black_scholes import *
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-FILEPATH = "../data/nse_bhavs"
-NIFTYPATH = "../data/nifty-daily.csv"
-DIVYDPATH = "../data/nifty-div-yields.csv"
 
 # ------------------------------------------------------------------------------
 
@@ -55,8 +54,15 @@ def main(
     for year in years:
         for mo in months:
             basedir = Path(data_reserve) / str(year) / str(mo)
-            basedir = f"{data_reserve}/{year}/{mo}"
-            files = get_file_list(basedir)
+
+            try:
+                files = get_file_list(basedir)
+            except Exception as e:
+                logger.exception(
+                    f"{datetime.now()}: Error findings files from {basedir}: "
+                    f"{e}. Skipping..."
+                )
+                continue
 
             try:
                 raw_bhav = pd.concat(
@@ -143,20 +149,68 @@ def main(
 
             logger.info(f"{datetime.now()}: Saved file to `{filename}`.\n")
     logger.info(f"{datetime.now()}: Done!")
+    return
 
 
+
+# BHAVCOPIES = "../data/nse_bhavs/"
+# UNDERLYING = "../data/nifty-daily.csv"
+# DIV_YIELDS = "../data/nifty-div-yields.csv"
 if __name__=="__main__":
+    parser = ArgumentParser(
+        description = "Compute B76 model-implied volatility from Bhavcopies."
+    )
+
+    parser.add_argument(
+        "--underlying",
+        type    = Path,
+        help    = "Path to the dataset of underlying prices.",
+        required = True
+    )
+
+    parser.add_argument(
+        "--bhavcopies",
+        type    = Path,
+        help    = "Directory of raw Bhavcopies.",
+        required = True
+    )
+
+    parser.add_argument(
+        "--div_yields",
+        type    = Path,
+        help    = "Path to the dataset of underlying dividend yields.",
+        default = None
+    )
+
+    parser.add_argument(
+        "--date_from",
+        type    = str,
+        help    = "Date to begin searching for Bhavcopies from.",
+        default = "2010-01-01",
+    )
+
+    parser.add_argument(
+        "--date_to",
+        type    = str,
+        help    = "Date to stop searching for Bhavcopies.",
+        default = "2019-10-04",
+    )
+
+    args = parser.parse_args()
+
     # these are the dates we (should) have Bhavcopies for
-    dates  = pd.date_range(start="2010-01-01", end="2019-10-04", freq='B')
+    # dates  = pd.date_range(start="2010-01-01", end="2019-10-04", freq='B')
+    dates = pd.date_range(start=args.date_from, end=args.date_to, freq='B')
+
     nifty  = prepare_underlying(
-        underlying_path = NIFTYPATH,
-        div_yield_path  = DIVYDPATH
+        underlying_path = args.underlying,
+        div_yield_path  = args.div_yields
     )
 
     main(
-        data_reserve = FILEPATH,
-        years        = dates.year,
-        months       = dates.month,
+        data_reserve = args.bhavcopies,
+        years        = set(dates.year),
+        months       = set(dates.month),
         underlying   = nifty
     )
 

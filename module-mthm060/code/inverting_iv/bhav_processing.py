@@ -19,10 +19,20 @@ def prepare_underlying(
         div_yield_path: Path|str|None
     ) -> pd.DataFrame:
     """
-    Prepares the underlying dataset by loading its data, from `underlying_path`,
-    and its dividend yields, from `div_yield_path`, if provided. If no path for
+    Prepares the underlying dataset by loading its data from `underlying_path`,
+    and its dividend yields from `div_yield_path`, if provided. If no path for
     dividend yields is provided, all dividend yields are assumed to numerically
     be zero.
+
+    Parameters:
+    `underlying_path`: Path|str:
+        Path to the dataset of underlying price.
+
+    `div_yield_path`: Path|str|None:
+        Path to the dataset of underlying dividend yields. If this is not
+        provided, or if after appropriate filtering and trying to align datetime
+        indices with the underlying dataset results in an empty dataframe, all
+        dividend yield data is set to 0.
 
     Returns a pd.DataFrame with columns ["close", "div_yield"], and a datetime
     index.
@@ -88,6 +98,13 @@ def prepare_underlying(
 
 
 def get_file_list(basedir: Path|str) -> list:
+    """
+    Returns a list of all files in `basedir`.
+
+    Parameters:
+    `basedir`: Path|str:
+        The directory to scan for files.
+    """
     logger.info(f"{datetime.now()}: Scanning `{basedir}`...")
 
     files = os.listdir(basedir)
@@ -97,6 +114,18 @@ def get_file_list(basedir: Path|str) -> list:
 
 
 def load_bhav(filepath: Path|str) -> pd.DataFrame:
+    """
+    Loads a single Bhavcopy, located at `filepath`, as a pd.DataFrame. Expects
+    column names:
+    `[instrument, symbol, expiry_date, strike, cp_flag, open, high, low, close,
+      settlement_price, n_contracts, value, oi, oi_chg, date]`.
+
+    Parameters:
+    `filepath`: Path|str:
+        Path to a single Bhavcopy CSV.
+
+    Returns a pd.DataFrame.
+    """
     df = pd.read_csv(
         filepath,
         names     = [
@@ -124,6 +153,21 @@ def load_bhav(filepath: Path|str) -> pd.DataFrame:
 
 
 def filter_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Filters `df` to only include options on the Nifty 50 index, with OI != 0.
+
+    Parameters:
+    `df`: pd.DataFrame:
+        Dataframe of a Bhavcopy. The specific filtering ops are:
+        * Column "instrument" == "OPTIDX" (index option),
+        * Column "symbol" == "NIFTY" (Nifty 50 underlying),
+        * Column "oi" != 0 (Nonzero OI; assumes `oi` is an integer column).
+
+        Drops columns "instrument" and "symbol", and parses columns "date" and
+        "expiry_date" into datetime columns.
+
+    Returns a modified `df`.
+    """
     mask = (
         df["instrument"].eq("OPTIDX")
         & df["symbol"].eq("NIFTY")
@@ -154,6 +198,19 @@ def merge_spot(
         raw_bhav: pd.DataFrame,
         spot: pd.DataFrame,
     ) -> pd.DataFrame:
+    """
+    Performs an INNER JOIN between `spot` (left) and `raw_bhav` (right).
+
+    Parameters:
+    `raw_bhav`: pd.DataFrame:
+        Dataframe of a Bhavcopy.
+
+    `spot`: pd.DataFrame:
+        Price data of an option's underlying asset. Expects at least columns
+        `["nifty", "div_yield"]`.
+
+    Returns a pd.DataFrame.
+    """
     df = (
         raw_bhav
         .merge(spot, left_index=True, right_index=True, how="inner")
