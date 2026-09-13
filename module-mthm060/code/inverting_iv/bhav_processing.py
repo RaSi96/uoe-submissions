@@ -1,4 +1,4 @@
-# name inspired by `hl.exe -map c2a4`
+# filename inspiration: `hl.exe -map c2a4`
 
 import logging
 import numpy as np
