@@ -64,9 +64,12 @@ def main(
                 )
                 continue
 
+            if len(files) == 0:
+                continue
+
             try:
                 raw_bhav = pd.concat(
-                    [load_bhav(f"{basedir}/{f}") for f in files]
+                    [load_bhav(f) for f in files]
                 )
                 logger.info(f"{datetime.now()}: Parsed files.")
             except Exception as e:
@@ -138,7 +141,7 @@ def main(
                 "oi_chg",
             ]
 
-            filename = f"{basedir}/{year}-{mo}-allbhav.csv"
+            filename = f"{basedir}/{year}-{mo}-allbhav-iv.csv"
 
             (
                 raw_bhav

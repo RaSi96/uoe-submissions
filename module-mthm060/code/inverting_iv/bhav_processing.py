@@ -65,11 +65,10 @@ def prepare_underlying(
 
         dy = dy.reindex(index=valid_range, method="ffill").dropna()
 
-        if (dy.empty) or (dy.size != nifty.size):
+        if dy.empty:
             logger.warning(
-                f"{datetime.now()}: Dividend yield dataset is empty or "
-                "contains NaNs after attempting to reindex with underlying "
-                "data. Setting to zero."
+                f"{datetime.now()}: Dividend yield dataset is empty after "
+                "attempting to reindex with underlying data. Setting to zero."
             )
             dy = pd.DataFrame(
                 data    = np.zeros_like(nifty),
@@ -81,7 +80,7 @@ def prepare_underlying(
     else:
         logger.warning(
             f"{datetime.now()}: No dividend yield data provided, setting to "
-            " zero."
+            "zero."
         )
         dy = pd.DataFrame(
             data    = np.zeros_like(nifty),
@@ -99,17 +98,15 @@ def prepare_underlying(
 
 def get_file_list(basedir: Path|str) -> list:
     """
-    Returns a list of all files in `basedir`.
+    Returns a list of all files in `basedir` that end in "*bhav.csv".
 
     Parameters:
     `basedir`: Path|str:
         The directory to scan for files.
     """
-    logger.info(f"{datetime.now()}: Scanning `{basedir}`...")
-
-    files = os.listdir(basedir)
+    _basedir = Path(basedir)
+    files = list(_basedir.glob("*bhav.csv"))
     logger.info(f"{datetime.now()}: Found {len(files)} files.")
-
     return files
 
 
