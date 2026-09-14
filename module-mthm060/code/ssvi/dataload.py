@@ -53,7 +53,7 @@ def load_processed_bhav(filepath: Path|str) -> pd.DataFrame:
             "K"
         ],
         header    = 0,
-        parse_dates=[0],
+        parse_dates=[0, 1],
         index_col = [0],
     )
 
