@@ -97,10 +97,14 @@ def plot_daily_smiles(
 
     Returns a matplotlib Figure.
     """
+    _msg = "total implied variance" if if_var else "implied volatility"
+    logger.info(f"{datetime.now()}: Plotting daily {_msg} curves...")
+
     dates = df_otm.loc[start:end].index.unique()
     _check_max(len(dates), max_plots)
 
     expiries = _sorted_expiries(df_otm)
+    logger.info(f"{datetime.now()}: Plotting for {len(expiries)} expiries...")
 
     colourgrid = np.linspace(0, 1, len(expiries))
     colours = plt.get_cmap("Paired")(colourgrid)
@@ -136,22 +140,16 @@ def plot_daily_smiles(
                 if if_var else subdf["iv"]
             )
 
-            ax.plot(
-                subdf["K"],
-                y,
-                label=str(expiry.date()),
-                alpha=0.35,
-                c=colour,
-            )
+            ax.plot(subdf["K"], y, label=expiry, alpha=0.35, c=colour)
 
             if len(y) >= 2:
                 collect.append(y.to_numpy())
 
-        if collect:
-            twp_avg = twp_multi_average(collect)
-            lo, hi = ax.get_xlim()
-            twp_idx = np.linspace(lo, hi, len(twp_avg))
-            ax.plot(twp_idx, twp_avg, ls="-.", c="tab:gray", label="twp_avg")
+        # if collect:
+        #     twp_avg = twp_multi_average(collect)
+        #     lo, hi = ax.get_xlim()
+        #     twp_idx = np.linspace(lo, hi, len(twp_avg))
+        #     ax.plot(twp_idx, twp_avg, ls="-.", c="tab:gray", label="twp_avg")
 
         quantity = (
             r"$\sigma_{\mathrm{B76}}^2\,\tau$" if if_var else
@@ -184,10 +182,12 @@ def plot_daily_smiles(
 
     fig.supxlabel("Log-forward-moneyness", fontsize="x-large")
     fig.tight_layout()
+
+    logger.info(f"{datetime.now()}: Plot generated.")
     return fig
 
 
-def plot_ssvi_fits(
+def plot_ssvi_curves(
         ssvi_params: dict[str, dict[str, np.ndarray|float]],
         df_otm: pd.DataFrame,
         *,
@@ -253,18 +253,10 @@ def plot_ssvi_fits(
 
     Returns a matplotlib Figure.
     """
-    dates = (
-        pd
-        .Index(ssvi_params.keys())
-        .intersection(
-            df_otm
-            .loc[start:end]
-            .index
-            .unique()
-            .tolist()
-        )
-        .sort_values()
-    )
+    logger.info(f"{datetime.now()}: Plotting SSVI fits...")
+
+    dates = df_otm.loc[start:end].index.unique().sort_values()
+    _params = {k: v for k, v in ssvi_params.items() if k in dates}
 
     _check_max(len(dates), max_dates, "dates")
 
@@ -273,9 +265,14 @@ def plot_ssvi_fits(
     else:
         expiries = np.sort(np.asarray(expiries))
 
+    logger.info(
+        f"{datetime.now()}: Plotting for {len(dates)} days and "
+        f"{len(expiries)} expiries."
+    )
+
     ncols = len(dates)
     nrows = len(expiries)
-    figsize = figsize or (3 * ncols, 3 * nrows)
+    figsize = figsize or (3*ncols, 3*nrows)
 
     fig, axes = plt.subplots(
         nrows   = nrows,
@@ -289,8 +286,7 @@ def plot_ssvi_fits(
     k_min, k_max = df_otm["K"].min(), df_otm["K"].max()
     iv_min, iv_max = df_otm["iv"].min(), df_otm["iv"].max()
 
-    for i, dt in enumerate(dates):
-        data = ssvi_params[dt]
+    for i, (dt, data) in enumerate(_params.items()):
         df = _ssvi_frame(data, dt)
 
         for j, exp in enumerate(expiries):
@@ -321,7 +317,7 @@ def plot_ssvi_fits(
                 ax.set_title(str(dt), fontsize="x-large")
 
             if i == 0:
-                ax.set_ylabel(f"Expiry: {exp}")
+                ax.set_ylabel(f"Expiry: {exp.item().date()}")
 
             if j == nrows-1:
                 ax.set_xlabel(r"Log-forward-moneyness ($k$)")
@@ -346,6 +342,8 @@ def plot_ssvi_fits(
     )
 
     fig.tight_layout(rect=(0, 0, 1, 0.97))
+
+    logger.info(f"{datetime.now()}: Plot generated.")
     return fig
 
 
@@ -382,19 +380,38 @@ def plot_ssvi_parameters(
 
     Returns a matplotlib Figure.
     """
-    params = pd.DataFrame.from_dict(
-        {
-            dt: {
-                "rho"  : data["rho"],
-                "eta"  : data["eta"],
-                "gamma": data["gamma"],
-            }
-            for dt, data in ssvi_params.items()
-        },
-        orient="index",
+    if not (0<rr_Delta<1):
+        raise ValueError(
+            f"{datetime.now()}: `rr_Delta` must be in [0, 1], got {rr_Delta} "
+            "instead."
+        )
+
+    logger.info(f"{datetime.now()}: Plotting fitted SSVI parameters...")
+
+    params = (
+        pd
+        .DataFrame
+        .from_dict(
+            {
+                dt: {
+                    "rho"  : data["rho"],
+                    "eta"  : data["eta"],
+                    "gamma": data["gamma"],
+                }
+                for dt, data in ssvi_params.items()
+            },
+            orient="index",
+        )
+        .sort_index()
     )
 
-    rr = pd.DataFrame(risk_reversals).T
+    rr = (
+        pd
+        .Series(risk_reversals, name=f"{rr_Delta*100}RR")
+        .to_frame()
+        .sort_index()
+    )
+
     ssvi_df = params.join(rr, how="left")
 
     fig, axes = plt.subplots(
@@ -423,10 +440,12 @@ def plot_ssvi_parameters(
     fig.supxlabel("Date", fontsize="x-large")
     fig.supylabel("Parameter Level", fontsize="x-large")
     fig.tight_layout()
+
+    logger.info(f"{datetime.now()}: Plot generated.")
     return fig
 
 
-def plot_ssvi_surfaces(
+def plot_ssvi_interp_surfaces(
         ssvi_params: dict[str, dict[str, np.ndarray|float]],
         start: str|pd.Timestamp,
         end: str|pd.Timestamp,
@@ -481,6 +500,8 @@ def plot_ssvi_surfaces(
 
     Returns a matplotlib Figure.
     """
+    logger.info(f"{datetime.now()}: Plotting SSVI surfaces...")
+
     start = pd.Timestamp(start)
     end = pd.Timestamp(end)
 
@@ -509,6 +530,7 @@ def plot_ssvi_surfaces(
     )
     axes = axes.ravel()
 
+    logger.info(f"{datetime.now()}: Beginning interpolation...")
     for ax, dt in zip(axes, dates):
         data = ssvi_params[dt]
         k_min, k_max = data["moneyness"].min(), data["moneyness"].max()
@@ -555,4 +577,6 @@ def plot_ssvi_surfaces(
         ax.set_visible(False)
 
     fig.tight_layout()
+
+    logger.info(f"{datetime.now()}: Plot generated.")
     return fig
