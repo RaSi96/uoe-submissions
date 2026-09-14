@@ -152,7 +152,13 @@ def compute_iv(df: pd.DataFrame) -> pd.DataFrame:
 
         ivs[i] = res.x
 
-    return df.assign(iv=ivs)
+    logger.info(f"{datetime.now()}: Optimisation completed.")
+
+    # F_t = S_t e^{(r-q)\tau}; r=0.10, q=div_yields, \tau=(t_T-t_0)/365
+    factors = (0.10-df["div_yield"])*df["years_to_expiry"]
+    F = df["nifty"] * np.exp(factors)
+
+    return df.assign(iv=ivs, F=F)
 
 
 def filter_otm(df: pd.DataFrame) -> pd.DataFrame:
@@ -178,8 +184,10 @@ def filter_otm(df: pd.DataFrame) -> pd.DataFrame:
         .reset_index()
         .sort_values(by=["date", "expiry_date", "strike"])
         .set_index("date")
-        .pipe(lambda x: x.assign( K=np.log(x["strike"]/x["nifty"])) )
+        .pipe(lambda x: x.assign( K=np.log(x["strike"]/x['F'])) )
     )
 
-    logger.info(f"{datetime.now()}: Filtered OTM only, assigned moneyness.")
+    logger.info(
+        f"{datetime.now()}: Filtered OTM only, assigned log-forward-moneyness."
+    )
     return df
