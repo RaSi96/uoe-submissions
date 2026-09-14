@@ -17,20 +17,37 @@ logger.setLevel(logging.INFO)
 # ------------------------------------------------------------------------------
 
 def main(
-        basedir: Path|str,
+        data_reserve: Path|str,
         plot_atm_var: bool=False,
         plot_atm_vol: bool=False,
-        plot_fitted_ssvi: bool=False,
+        plot_ssvi_fits: bool=False,
         plot_ssvi_params: bool=False,
-        plot_ssvi_interp_surfaces: bool=False,
-        plot_window_start: pd.Timestamp=None,
-        plot_window_end: pd.Timestamp=None,
+        plot_ssvi_surfaces: bool=False,
+        plot_window_start: pd.Timestamp|None=None,
+        plot_window_end: pd.Timestamp|None=None,
+        expiries_start: pd.Timestamp|None=None,
+        expiries_end: pd.Timestamp|None=None,
     ) -> None:
-    files = find_processed_bhavs(basedir)
+    files = find_processed_bhavs(data_reserve)
     df = pd.concat(
         [load_processed_bhav(f) for f in files]
     )
     logger.info(f"{datetime.now()}: Loaded processed Bhavcopies.")
+
+    if expiries_start and expiries_end:
+        _mask = df["expiry_date"].between(
+            expiries_start,
+            expiries_end,
+            inclusive = "both"
+        )
+
+        df = df.loc[_mask]
+        logger.info(
+            f"{datetime.now()}: Filtered to expiries only between "
+            f"`{expiries_start}` and `{expiries_end}`."
+        )
+
+        _mask = None
 
     if plot_atm_var or plot_atm_vol:
         plot_daily_smiles(
@@ -85,8 +102,8 @@ def main(
 
         ssvi_params[str(dt.date())] = extra_params | opt_ssvi
 
-    if plot_fitted_ssvi:
-        plot_ssvi_fits(
+    if plot_ssvi_fits:
+        plot_ssvi_curves(
             ssvi_params,
             df,
             start = plot_window_start,
@@ -126,8 +143,8 @@ def main(
         plot_ssvi_parameters(ssvi_params, risk_reversals, 0.25)
         plt.show()
 
-    if plot_ssvi_interp_surfaces:
-        plot_ssvi_surfaces(ssvi_params,
+    if plot_ssvi_surfaces:
+        plot_ssvi_interp_surfaces(ssvi_params,
             start = plot_window_start,
             end   = plot_window_end
         )
@@ -135,11 +152,12 @@ def main(
 
     runtime = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     filename = f"./{runtime}_ssvi_fitted_params.npy"
-    np.save(ssvi_params, filename)
+    np.save(filename, ssvi_params)
 
     logger.info(
         f"{datetime.now()}: SSVI fitted parameters saved to `{filename}`"
     )
+
     return
 
 
@@ -154,7 +172,6 @@ if __name__=="__main__":
     )
     parser.add_argument(
         "--plot_atm_var",
-        type     = bool,
         help     = (
             "Whether or not to plot empirical ATM total implied variance "
             "curves."
@@ -164,7 +181,6 @@ if __name__=="__main__":
     )
     parser.add_argument(
         "--plot_atm_vol",
-        type     = bool,
         help     = (
             "Whether or not to plot empirical ATM model-implied volatility "
             "curves."
@@ -174,21 +190,18 @@ if __name__=="__main__":
     )
     parser.add_argument(
         "--plot_ssvi_fits",
-        type     = bool,
         help     = "Whether or not to plot SSVI fits vs. empirical IV smiles.",
         default  = False,
         action   = "store_true"
     )
     parser.add_argument(
         "--plot_ssvi_params",
-        type     = bool,
         help     = "Whether or not to plot fitted SSVI parameters over time.",
         default  = False,
         action   = "store_true"
     )
     parser.add_argument(
         "--plot_ssvi_surfaces",
-        type     = bool,
         help     = (
             "Whether or not to plot fitted & interpolated SSVI surfaces."
         ),
@@ -205,7 +218,7 @@ if __name__=="__main__":
         ),
     )
     parser.add_argument(
-        "--plot_window_start",
+        "--plot_window_end",
         type     = pd.Timestamp,
         help     = (
             "Date/datetime string of the end of the plotting window. Required "
@@ -213,6 +226,21 @@ if __name__=="__main__":
             "otherwise."
         ),
     )
+    parser.add_argument(
+        "--expiries_start",
+        type     = pd.Timestamp,
+        help     = (
+            "Date/datetime string of the start of the expiry window."
+        ),
+    )
+    parser.add_argument(
+        "--expiries_end",
+        type     = pd.Timestamp,
+        help     = (
+            "Date/datetime string of the end of the expiry window."
+        ),
+    )
 
     args = parser.parse_args()
+
     main(**vars(args))
