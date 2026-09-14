@@ -6,6 +6,8 @@ from datetime import datetime
 from pathlib import Path
 
 from dataload import *
+from metrics import *
+from plots import *
 from ssvi import *
 
 logging.basicConfig()
@@ -14,12 +16,30 @@ logger.setLevel(logging.INFO)
 
 # ------------------------------------------------------------------------------
 
-def main(basedir: Path|str):
+def main(
+        basedir: Path|str,
+        plot_atm_var: bool=False,
+        plot_atm_vol: bool=False,
+        plot_fitted_ssvi: bool=False,
+        plot_ssvi_params: bool=False,
+        plot_ssvi_interp_surfaces: bool=False,
+        plot_window_start: pd.Timestamp=None,
+        plot_window_end: pd.Timestamp=None,
+    ) -> None:
     files = find_processed_bhavs(basedir)
     df = pd.concat(
         [load_processed_bhav(f) for f in files]
     )
     logger.info(f"{datetime.now()}: Loaded processed Bhavcopies.")
+
+    if plot_atm_var or plot_atm_vol:
+        plot_daily_smiles(
+            df,
+            if_var = plot_atm_var,
+            start  = plot_window_start,
+            end    = plot_window_end
+        )
+        plt.show()
 
     dates = df.index.unique()
     data_ax = ["strike", "iv", "K", "expiry_date", "years_to_expiry"]
@@ -65,6 +85,63 @@ def main(basedir: Path|str):
 
         ssvi_params[str(dt.date())] = extra_params | opt_ssvi
 
+    if plot_fitted_ssvi:
+        plot_ssvi_fits(
+            ssvi_params,
+            df,
+            start = plot_window_start,
+            end   = plot_window_end
+        )
+        plt.show()
+
+    if plot_ssvi_params:
+        expiries = sorted([str(i) for i in df["expiry_date"].unique().date])
+        risk_reversals = {}
+
+        for dt, data in ssvi_params.items():
+            # need this to compute time to expiry, and subsequently delta for RR
+            ddiff = pd.to_datetime(data["expiry_date"]) - pd.Timestamp(dt)
+
+            _ = pd.DataFrame({
+                "ssvi"       : data["ssvi_smile"],
+                'K'          : data["moneyness"],
+                "expiry_date": data["expiry_date"],
+                "iv"         : data["market_iv"],
+                "tau"        : ddiff.total_seconds()/(60*60*24*365)
+            })
+
+            for exp in expiries:
+                mask = _["expiry_date"].eq(exp)
+                subdf = _.loc[mask].set_index('K').drop(columns="expiry_date")
+
+                if exp == expiries[-1]:
+                    rr_svi = compute_risk_rev(
+                        ln_money = subdf.index,
+                        iv       = subdf["ssvi"],
+                        tau      = subdf["tau"],
+                    )
+
+                    risk_reversals[dt] = rr_svi
+
+        plot_ssvi_parameters(ssvi_params, risk_reversals, 0.25)
+        plt.show()
+
+    if plot_ssvi_interp_surfaces:
+        plot_ssvi_surfaces(ssvi_params,
+            start = plot_window_start,
+            end   = plot_window_end
+        )
+        plt.show()
+
+    runtime = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    filename = f"./{runtime}_ssvi_fitted_params.npy"
+    np.save(ssvi_params, filename)
+
+    logger.info(
+        f"{datetime.now()}: SSVI fitted parameters saved to `{filename}`"
+    )
+    return
+
 
 if __name__=="__main__":
     parser = ArgumentParser(description = "Fit SSVI surfaces to Bhavcopies.")
@@ -75,7 +152,67 @@ if __name__=="__main__":
         help     = "Directory of Bhavcopies with IV computed.",
         required = True
     )
+    parser.add_argument(
+        "--plot_atm_var",
+        type     = bool,
+        help     = (
+            "Whether or not to plot empirical ATM total implied variance "
+            "curves."
+        ),
+        default  = False,
+        action   = "store_true"
+    )
+    parser.add_argument(
+        "--plot_atm_vol",
+        type     = bool,
+        help     = (
+            "Whether or not to plot empirical ATM model-implied volatility "
+            "curves."
+        ),
+        default  = False,
+        action   = "store_true"
+    )
+    parser.add_argument(
+        "--plot_ssvi_fits",
+        type     = bool,
+        help     = "Whether or not to plot SSVI fits vs. empirical IV smiles.",
+        default  = False,
+        action   = "store_true"
+    )
+    parser.add_argument(
+        "--plot_ssvi_params",
+        type     = bool,
+        help     = "Whether or not to plot fitted SSVI parameters over time.",
+        default  = False,
+        action   = "store_true"
+    )
+    parser.add_argument(
+        "--plot_ssvi_surfaces",
+        type     = bool,
+        help     = (
+            "Whether or not to plot fitted & interpolated SSVI surfaces."
+        ),
+        default  = False,
+        action   = "store_true"
+    )
+    parser.add_argument(
+        "--plot_window_start",
+        type     = pd.Timestamp,
+        help     = (
+            "Date/datetime string of the start of the plotting window. Required "
+            "if any of the `--plot_*` arguments are provided as `True`, ignored "
+            "otherwise."
+        ),
+    )
+    parser.add_argument(
+        "--plot_window_start",
+        type     = pd.Timestamp,
+        help     = (
+            "Date/datetime string of the end of the plotting window. Required "
+            "if any of the `--plot_*` arguments are provided as `True`, ignored "
+            "otherwise."
+        ),
+    )
 
     args = parser.parse_args()
-
-    main(args.data_reserve)
+    main(**vars(args))

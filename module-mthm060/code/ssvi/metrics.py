@@ -57,7 +57,7 @@ def compute_risk_rev(
     ) -> float:
     """
     Computes the Risk Reversal (RR) of a set of options. Risk Reversal is:
-    $$ RR(x) = \sigma_{x\Delta}^{CE} - \sigma_{x\Delta}^{PE} $$
+    $$ RR(x) = iv_{x Delta}^{CE} - iv_{x Delta}^{PE} $$
 
     Parameters:
     `ln_money`: pd.Series:
