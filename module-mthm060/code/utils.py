@@ -33,7 +33,7 @@ def get_file_list(basedir: Path|str, glob: str="*.csv") -> list[Path]:
     Returns a list of Path-qualified filepaths.
     """
     _basedir = Path(basedir)
-    files = list(_basedir.glob(glob))
+    files = list(_basedir.rglob(glob))
     logger.info(f"{datetime.now()}: Found {len(files)} files.")
     return files
 
