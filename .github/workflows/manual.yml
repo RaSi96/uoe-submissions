@@ -37,7 +37,7 @@ jobs:
       - name: Install Pandoc
         shell: bash -l {0}
         run: |
-          conda install -y -c conda-forge pandoc==3.9
+          conda install -y -c conda-forge pandoc==3.9 pandoc-crossref==0.3.24
 
       - name: Install Tex & Fonts
         run: |
@@ -46,11 +46,12 @@ jobs:
           texlive-xetex texlive-latex-extra texlive-fonts-recommended \
           fonts-liberation \
           fonts-hack \
-          librsvg2-bin
+          librsvg2-bin \
+          fonts-noto-core
 
       - name: Build all PDFs
         shell: bash -l {0}
-        run: make
+        run: make -j$(nproc)
 
       - name: Collect PDFs With Structure
         run: |

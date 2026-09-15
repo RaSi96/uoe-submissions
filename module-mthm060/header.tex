@@ -1,0 +1,72 @@
+\usepackage{float}
+\floatplacement{figure}{htbp}
+
+% allow more figures to occupy a page
+\setcounter{topnumber}{10}
+\setcounter{bottomnumber}{10}
+\setcounter{totalnumber}{20}
+
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.90}
+
+% reduce vertical space between floats
+\setlength{\floatsep}{6pt}
+\setlength{\textfloatsep}{6pt}
+\setlength{\intextsep}{6pt}
+
+\usepackage[export]{adjustbox}
+\usepackage[section]{placeins}
+
+\usepackage{caption}
+\captionsetup[figure]{labelfont=bf}
+\captionsetup[table]{labelfont=bf}
+
+\pagenumbering{arabic}
+
+% redefine \includegraphics with frame, aspect ratio, and size limits
+\let\includegraphicsbak\includegraphics
+\renewcommand*{\includegraphics}[2][]{%
+  \includegraphicsbak[
+    frame,
+    keepaspectratio,
+    max width=\textwidth,
+    max height=0.9\textheight,
+    #1
+  ]{#2}%
+}
+
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  breakatwhitespace=true,
+  columns=fullflexible,
+  keepspaces=true,
+  upquote=true,
+}
+
+\usepackage{setspace}
+\setstretch{1.05}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+
+% fonts
+\usepackage{fontspec}
+\usepackage{unicode-math}
+
+\setmainfont[Renderer=HarfBuzz]{Liberation Serif}
+\setsansfont[Renderer=HarfBuzz]{Liberation Sans}
+\setmonofont[Scale=0.7, Renderer=HarfBuzz]{Hack}
+
+% devanagari fallback engine
+\newfontfamily\DevanagariFallback[
+  Renderer=HarfBuzz,
+  Script=Devanagari,
+  Scale=1.1
+]{Noto Serif Devanagari}
+
+% automatically intercept and switch to devanagari font on character read
+\usepackage[Devanagari]{ucharclasses}
+\setTransitionsForDevanagari{\DevanagariFallback}{\normalfont}
