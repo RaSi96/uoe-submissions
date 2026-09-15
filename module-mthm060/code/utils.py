@@ -10,6 +10,14 @@ logger.setLevel(logging.INFO)
 
 # ------------------------------------------------------------------------------
 
+def check_max(n: int, max_n: int, what: str) -> None:
+    if n > max_n:
+        raise ValueError(
+            f"{n} {what} requested, but max_{what.replace(' ', '_')}={max_n}. "
+            f"Reduce the date range or increase the limit."
+        )
+
+
 def get_file_list(basedir: Path|str, glob: str="*.csv") -> list[Path]:
     """
     Returns a list of all files in `basedir` that end with `regex`.

@@ -5,27 +5,16 @@ import pandas as pd
 
 from datetime import datetime
 from matplotlib.figure import Figure
-from typing import Literal, Iterable
+from typing import Iterable
 
 from ssvi import ssvi_smile
+from code.utils import check_max
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 # ------------------------------------------------------------------------------
-
-def _check_max(
-        n: int,
-        max_n: int,
-        what: Literal["plots", "dates", "surfaces"]="plots"
-    ) -> None:
-    if n > max_n:
-        raise ValueError(
-            f"{n} {what} requested, but max_{what.replace(' ', '_')}={max_n}. "
-            f"Reduce the date range or increase the limit."
-        )
-
 
 def _sorted_expiries(df: pd.DataFrame) -> np.ndarray:
     return np.sort(df["expiry_date"].unique())
@@ -101,7 +90,7 @@ def plot_daily_smiles(
     logger.info(f"{datetime.now()}: Plotting daily {_msg} curves...")
 
     dates = df_otm.loc[start:end].index.unique()
-    _check_max(len(dates), max_plots)
+    check_max(len(dates), max_plots, "plots")
 
     expiries = _sorted_expiries(df_otm)
     logger.info(f"{datetime.now()}: Plotting for {len(expiries)} expiries...")
@@ -258,7 +247,7 @@ def plot_ssvi_curves(
     dates = df_otm.loc[start:end].index.unique().sort_values()
     _params = {k: v for k, v in ssvi_params.items() if k in dates}
 
-    _check_max(len(dates), max_dates, "dates")
+    check_max(len(dates), max_dates, "dates")
 
     if expiries is None:
         expiries = _sorted_expiries(df_otm)
@@ -523,7 +512,7 @@ def plot_ssvi_interp_surfaces(
             "together. Received star={start} and end={end}."
         )
 
-    _check_max(len(dates), max_surfaces, "surfaces")
+    check_max(len(dates), max_surfaces, "surfaces")
 
     nrows = int(np.ceil(len(dates) / ncols))
     figsize = figsize or (6*ncols, 6*nrows)
@@ -539,7 +528,7 @@ def plot_ssvi_interp_surfaces(
 
     logger.info(f"{datetime.now()}: Beginning interpolation...")
     for ax, dt in zip(axes, dates):
-        data = ssvi_params[dt]
+        data: dict = ssvi_params[dt]
         k_min, k_max = data["moneyness"].min(), data["moneyness"].max()
         iv_min = data["market_iv"].min()
 
