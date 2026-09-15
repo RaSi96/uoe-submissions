@@ -505,8 +505,7 @@ def plot_ssvi_interp_surfaces(
     if not (start and end):  # if start and end are both None
         dates = sorted(dt for dt in ssvi_params.keys())
     elif (start and end):  # if start and end are both provided
-        start = pd.Timestamp(start)
-        end = pd.Timestamp(end)
+        start, end = pd.Timestamp(start), pd.Timestamp(end)
 
         dates = sorted(
             dt for dt in ssvi_params
@@ -527,14 +526,14 @@ def plot_ssvi_interp_surfaces(
     _check_max(len(dates), max_surfaces, "surfaces")
 
     nrows = int(np.ceil(len(dates) / ncols))
-    figsize = figsize or (6 * ncols, 6 * nrows)
+    figsize = figsize or (6*ncols, 6*nrows)
 
     fig, axes = plt.subplots(
-        nrows=nrows,
-        ncols=ncols,
-        figsize=figsize,
-        subplot_kw={"projection": "3d"},
-        squeeze=False,
+        nrows      = nrows,
+        ncols      = ncols,
+        figsize    = figsize,
+        subplot_kw = {"projection": "3d"},
+        squeeze    = False,
     )
     axes = axes.ravel()
 

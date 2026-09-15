@@ -151,7 +151,7 @@ def main(
         )
         plt.show()
 
-    runtime = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    runtime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"./{runtime}_ssvi_fitted_params.npy"
     np.save(filename, ssvi_params)
 
