@@ -447,8 +447,8 @@ def plot_ssvi_parameters(
 
 def plot_ssvi_interp_surfaces(
         ssvi_params: dict[str, dict[str, np.ndarray|float]],
-        start: str|pd.Timestamp,
-        end: str|pd.Timestamp,
+        start: str|pd.Timestamp|None=None,
+        end: str|pd.Timestamp|None=None,
         *,
         max_surfaces: int=8,
         ncols: int=4,
@@ -477,11 +477,11 @@ def plot_ssvi_interp_surfaces(
 
         And all `np.ndarrays` are the same length.
 
-    `start`: str|pd.Timestamp:
+    `start`: str|pd.Timestamp|None:
         The start date of the date range. For each day in the date range, all IV
         curves are plotted together on a shared Axes object.
 
-    `end`: str|pd.Timestamp:
+    `end`: str|pd.Timestamp|None:
         The end date of the date range. For each day in the date range, all IV
         curves are plotted together on a shared Axes object.
 
@@ -502,18 +502,26 @@ def plot_ssvi_interp_surfaces(
     """
     logger.info(f"{datetime.now()}: Plotting SSVI surfaces...")
 
-    start = pd.Timestamp(start)
-    end = pd.Timestamp(end)
+    if not (start and end):  # if start and end are both None
+        dates = sorted(dt for dt in ssvi_params.keys())
+    elif (start and end):  # if start and end are both provided
+        start = pd.Timestamp(start)
+        end = pd.Timestamp(end)
 
-    dates = sorted(
-        dt for dt in ssvi_params
-        if start <= pd.Timestamp(dt) <= end
-    )
+        dates = sorted(
+            dt for dt in ssvi_params
+            if start <= pd.Timestamp(dt) <= end
+        )
 
-    if not dates:
+        if not dates:
+            raise ValueError(
+                f"{datetime.now()}: No SSVI surfaces found between "
+                f"{start.date()} and {end.date()}."
+            )
+    else:  # one of start and end weren't provided
         raise ValueError(
-            f"{datetime.now()}: No SSVI surfaces found between {start.date()} "
-            f"and {end.date()}."
+            f"{datetime.now()}: Both `start` and `end` must be provided "
+            "together. Received star={start} and end={end}."
         )
 
     _check_max(len(dates), max_surfaces, "surfaces")

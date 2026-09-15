@@ -5,7 +5,8 @@ from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
 
-from dataload import *
+from code.utils import *
+# from dataload import *
 from metrics import *
 from plots import *
 from ssvi import *
@@ -28,7 +29,7 @@ def main(
         expiries_start: pd.Timestamp|None=None,
         expiries_end: pd.Timestamp|None=None,
     ) -> None:
-    files = find_processed_bhavs(data_reserve)
+    files = get_file_list(data_reserve, glob="*-allbhav-iv.csv")
     df = pd.concat(
         [load_processed_bhav(f) for f in files]
     )
@@ -144,7 +145,8 @@ def main(
         plt.show()
 
     if plot_ssvi_surfaces:
-        plot_ssvi_interp_surfaces(ssvi_params,
+        plot_ssvi_interp_surfaces(
+            ssvi_params,
             start = plot_window_start,
             end   = plot_window_end
         )

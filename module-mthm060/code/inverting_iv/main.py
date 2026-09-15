@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
+from code.utils import *
 from bhav_processing import *
 from black_scholes import *
 
@@ -55,7 +56,8 @@ def main(
             basedir = Path(data_reserve) / str(year) / str(mo)
 
             try:
-                files = get_file_list(basedir)
+                # files = get_file_list(basedir)
+                files = get_file_list(basedir, glob="*bhav.csv")
             except Exception as e:
                 logger.exception(
                     f"{datetime.now()}: Error findings files from {basedir}: "
