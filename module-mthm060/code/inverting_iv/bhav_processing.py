@@ -95,20 +95,6 @@ def prepare_underlying(
     return nifty
 
 
-# def get_file_list(basedir: Path|str) -> list:
-#     """
-#     Returns a list of all files in `basedir` that end with "*bhav.csv".
-
-#     Parameters:
-#     `basedir`: Path|str:
-#         The directory to scan for files.
-#     """
-#     _basedir = Path(basedir)
-#     files = list(_basedir.glob("*bhav.csv"))
-#     logger.info(f"{datetime.now()}: Found {len(files)} files.")
-#     return files
-
-
 def load_bhav(filepath: Path|str) -> pd.DataFrame:
     """
     Loads a single Bhavcopy, located at `filepath`, as a pd.DataFrame. Expects

@@ -56,7 +56,6 @@ def main(
             basedir = Path(data_reserve) / str(year) / str(mo)
 
             try:
-                # files = get_file_list(basedir)
                 files = get_file_list(basedir, glob="*bhav.csv")
             except Exception as e:
                 logger.exception(
@@ -156,10 +155,6 @@ def main(
     return
 
 
-
-# BHAVCOPIES = "../data/nse_bhavs/"
-# UNDERLYING = "../data/nifty-daily.csv"
-# DIV_YIELDS = "../data/nifty-div-yields.csv"
 if __name__=="__main__":
     parser = ArgumentParser(
         description = "Compute B76 model-implied volatility from Bhavcopies."
