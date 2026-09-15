@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Iterable
 
 from code.utils import *
-from bhav_processing import *
-from black_scholes import *
+from .bhav_processing import *
+from .black_scholes import *
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)

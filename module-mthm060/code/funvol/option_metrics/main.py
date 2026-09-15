@@ -6,9 +6,9 @@ from itertools import product
 from pathlib import Path
 
 from code.utils import *
-from greeks import *
-from om_surfacing import ometrics_surface
-from plots import *
+from .greeks import *
+from .om_surfacing import ometrics_surface
+from .plots import *
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -24,6 +24,7 @@ def main(
         plot_window_start: pd.Timestamp|None=None,
         plot_window_end: pd.Timestamp|None=None,
     ) -> None:
+    print(data_reserve)
     files = get_file_list(data_reserve, glob="*-allbhav-iv.csv")
     df = pd.concat(
         [load_processed_bhav(f) for f in files]
@@ -71,6 +72,7 @@ def main(
     )
 
     # OptionMetrics, as per [1] ------------------------------------------------
+    logger.info(f"{datetime.now()}: Prepping OM grid...")
 
     delta_start = 0.10
     delta_end = 0.90
@@ -94,6 +96,8 @@ def main(
             start            = plot_window_start,
             end              = plot_window_end
         )
+
+        plt.show()
 
     runtime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"./{data_reserve}/{runtime}_om-surfaces.csv"

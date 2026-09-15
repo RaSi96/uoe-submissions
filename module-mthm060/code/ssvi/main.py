@@ -6,9 +6,9 @@ from datetime import datetime
 from pathlib import Path
 
 from code.utils import *
-from metrics import *
-from plots import *
-from ssvi import *
+from .metrics import *
+from .plots import *
+from .ssvi import *
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)

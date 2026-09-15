@@ -7,7 +7,7 @@ from datetime import datetime
 from matplotlib.figure import Figure
 from typing import Iterable
 
-from ssvi import ssvi_smile
+from .ssvi import ssvi_smile
 from code.utils import check_max
 
 logging.basicConfig()
