@@ -509,7 +509,7 @@ def plot_ssvi_interp_surfaces(
     else:  # one of start and end weren't provided
         raise ValueError(
             f"{datetime.now()}: Both `start` and `end` must be provided "
-            "together. Received star={start} and end={end}."
+            "together. Received start={start} and end={end}."
         )
 
     check_max(len(dates), max_surfaces, "surfaces")
