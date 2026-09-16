@@ -48,14 +48,14 @@ def main(data_reserve: Path|str, n_o: int=4) -> None:
     basedir = os.path.join(os.path.dirname(__file__), "artefacts")
 
     filename_ce = f"{basedir}/{runtime}_legendre-coeffs-ce.csv"
-    coeffs_ce.reset_index().to_csv(filename_ce, index = False)
+    coeffs_ce.reset_index().to_csv(filename_ce, index=False)
     logger.info(
         f"{datetime.now()}: Call-side Legendre projections saved to "
         f"`{filename_ce}`."
     )
 
     filename_pe = f"{basedir}/{runtime}_legendre-coeffs-pe.csv"
-    coeffs_pe.reset_index().to_csv(filename_pe, index = False)
+    coeffs_pe.reset_index().to_csv(filename_pe, index=False)
     logger.info(
         f"{datetime.now()}: Put-side Legendre projections saved to "
         f"`{filename_pe}`."
