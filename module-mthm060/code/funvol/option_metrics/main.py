@@ -9,7 +9,6 @@ from pathlib import Path
 from code.utils import *
 from .greeks import *
 from .om_surfacing import ometrics_surface
-# from .plots import *
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -17,14 +16,7 @@ logger.setLevel(logging.INFO)
 
 # ------------------------------------------------------------------------------
 
-def main(
-        data_reserve: Path|str,
-        # plot_surface: bool=False,
-        # plot_option_type: Literal["CE", "PE", "Both"]="Both",
-        # interpolate_plot: bool=False,
-        # plot_window_start: pd.Timestamp|None=None,
-        # plot_window_end: pd.Timestamp|None=None,
-    ) -> None:
+def main(data_reserve: Path|str) -> None:
     files = get_file_list(data_reserve, glob="*-allbhav-iv.csv")
     df = pd.concat([load_processed_bhav(f) for f in files])
 
@@ -99,20 +91,6 @@ def main(
     filename = f"{basedir}/{runtime}_om-surfaces.csv"
     om_surface.to_csv(filename, index=False)
     logger.info(f"{datetime.now()}: OM surface data saved to `{filename}`.")
-
-    # if plot_surface:
-    #     fig = plot_om_surfaces(
-    #         om_surface       = om_surface,
-    #         option_type      = plot_option_type,
-    #         interpolate_zero = interpolate_plot,
-    #         start            = plot_window_start,
-    #         end              = plot_window_end
-    #     )
-
-    #     plotname = f"{basedir}/{runtime}_om-surface-plot.png"
-    #     fig.savefig(plotname)
-    #     logger.info(f"{datetime.now()}: Plot saved to `{plotname}`.")
-
     return
 
 
@@ -127,52 +105,6 @@ if __name__=="__main__":
         help     = "Directory of Bhavcopies with IV computed.",
         required = True
     )
-    # parser.add_argument(
-    #     "--plot_surface",
-    #     help     = "Whether or not to plot OptionMetrics-generated IV surfaces.",
-    #     default  = False,
-    #     action   = "store_true"
-    # )
-    # parser.add_argument(
-    #     "--plot_option_type",
-    #     type     = str,
-    #     help     = (
-    #         "Which wing of surfaces must be plotted. May be 'CE' for calls, "
-    #         "'PE' for puts, or 'Both' for both. Only used if `--plot_surface` "
-    #         "is passed."
-    #     )
-    # )
-    # parser.add_argument(
-    #     "--interpolate_plot",
-    #     help     = (
-    #         "Whether or not to interpolate the OptionMetrics surface plot "
-    #         "across the 0-Delta grid point. If `--plot_option_type=Both`, the "
-    #         "default plots call and put wings separately with a gap at Delta=0. "
-    #         "Delta=0. If this is true, the gap is linearly interpolated across "
-    #         "the tau axis (time to expiry). Only used if "
-    #         "`--plot_option_type=Both`."
-    #     ),
-    #     default  = False,
-    #     action   = "store_true"
-    # )
-    # parser.add_argument(
-    #     "--plot_window_start",
-    #     type     = pd.Timestamp,
-    #     help     = (
-    #         "Date/datetime string of the start of the plotting window. Required "
-    #         "if any of the `--plot_*` arguments are provided as `True`, ignored "
-    #         "otherwise."
-    #     ),
-    # )
-    # parser.add_argument(
-    #     "--plot_window_end",
-    #     type     = pd.Timestamp,
-    #     help     = (
-    #         "Date/datetime string of the end of the plotting window. Required "
-    #         "if any of the `--plot_*` arguments are provided as `True`, ignored "
-    #         "otherwise."
-    #     ),
-    # )
 
     args = parser.parse_args()
 
