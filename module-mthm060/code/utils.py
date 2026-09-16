@@ -64,7 +64,8 @@ def load_processed_bhav(filepath: Path|str) -> pd.DataFrame:
             "div_yield",
             "years_to_expiry",
             "iv",
-            "K"
+            'F',
+            'K',
         ],
         header    = 0,
         parse_dates=[0, 1],
