@@ -52,7 +52,7 @@ def main(
         basedir = os.path.join(os.path.dirname(__file__), "artefacts")
 
         filename = f"{basedir}/{runtime}_neural_{id}.csv"
-        neural_df.to_csv(filename, index=False)
+        neural_df.reset_index().to_csv(filename, index=False)
         logger.info(
             f"{datetime.now()}: FPCA coefficient data saved to `{filename}`."
         )
