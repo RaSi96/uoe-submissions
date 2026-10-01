@@ -23,7 +23,7 @@ def main(data_reserve: Path|str, freq: str='B') -> None:
     runtime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     basedir = os.path.join(os.path.dirname(__file__), "artefacts")
     filename = f"{basedir}/{runtime}_detrended_underlying_price.csv"
-    df.reset_index().to_csv(filename)
+    df.reset_index().to_csv(filename, index=False)
     logger.info(
         f"{datetime.now()}: Detrended underlying price data saved to "
         f"`{filename}`."

@@ -3,15 +3,21 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import statsmodels.api as sm
 
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from datetime import datetime
+from matplotlib.artist import Artist
 from matplotlib.colors import Normalize
 from matplotlib.figure import Figure
+from matplotlib.animation import FuncAnimation
+from matplotlib.axes import Axes
+from numpy.random import Generator
 from scipy.special import eval_legendre
+from scipy.stats import rankdata
 from statsmodels.stats.outliers_influence import variance_inflation_factor as vif
-from typing import Literal
+from typing import Any, cast, Literal, Iterable, Protocol
 
 from ssvi.ssvi import ssvi_smile
 from ssvi.metrics import compute_risk_rev
@@ -22,6 +28,21 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 # ------------------------------------------------------------------------------
+
+class ContinuousDistribution(Protocol):
+    """
+    Surrogate class for SciPy's distributions.
+    """
+    name: str
+    shapes: str|None
+    def fit(self, data, *args, **kwds) -> tuple[float, ...]: ...
+    def cdf(self, x, *args, **kwds)    -> np.ndarray: ...
+    def sf(self, x, *args, **kwds)     -> np.ndarray: ...
+    def pdf(self, x, *args, **kwds)    -> np.ndarray: ...
+    def rvs(self, *args, **kwds)       -> np.ndarray|float|int: ...
+    def logpdf(self, x, *args, **kwds) -> np.ndarray: ...
+    def ppf(self, x, *args, **kwds)    -> np.ndarray: ...
+
 
 def _sorted_expiries(
         df: pd.DataFrame,
@@ -942,6 +963,23 @@ def plot_eigensurfaces(
         eigenvariances: np.ndarray,
         n_o: int=4
     ) -> Figure:
+    """
+    Plots the eigenfunctions in `princomps` as 3D surfaces. Legendre polynomial
+    basis functions ल_{m,n}=L_m(x)L_n(y) (where 0 ≤ m+n ≤ 4) are evaluated over
+    a [-1, 1]^2 grid, then the inner product ⟨ल, P_i⟩ is taken to obtain a
+    surface for each eigenfunction. The plotted Z-axis is shared across all
+    eigensurfaces. The X-axis is pseudo-Delta, the Y-axis is pseudo-tau.
+
+    Parameters:
+    `princomps`: np.ndarray:
+        The principal components (eigenvectors/eigenfunctions).
+
+    `eigenvariances`: np.ndarray:
+        The eigenvalues (principal component scores/explained variance ratios)
+        corresponding to a particular principal component.
+
+    Returns a matplotlib Figure.
+    """
     degrees = np.arange(0, n_o+1, 1)
     norm = 1/np.sqrt( 2/(2*degrees +1) )
 
@@ -999,4 +1037,420 @@ def plot_eigensurfaces(
     fig.tight_layout(pad=0.5)
     return fig
 
+
+def safe_qqplot(
+        data: pd.DataFrame|pd.Series,
+        dist: ContinuousDistribution,
+        distargs: Iterable,
+        loc: float|int,
+        scale: float|int,
+        rng: Generator,
+        ax: Axes,
+        line: str="45",
+    ) -> None:
+    """
+    Attempts a standard statsmodels QQ plot, falling back gracefully to an
+    empirical RVS simulation if the solver fails.
+
+    Parameters:
+    `data`: pd.DataFrame|pd.Series:
+        The data to evaluate a QQ plot against.
+
+    `dist`: ContinuousDistribution:
+        The reference scipy.stats distribution to evaluate quantiles of.
+
+    `distargs`: Iterable:
+        Arguments to `dist`, obtained by pre-fitting `dist` to `data`.
+
+    `loc`: float|int:
+        The explicit location (mean) parameter for `dist`.
+
+    `scale`: float|int:
+        The explicit scale (standard deviation) parameter for `dist`.
+
+    `rng`: Generator:
+        A seeded NumPy Random Generator (np.random.default_rng) object.
+
+    `ax`: Axes:
+        A matplotlib Axes object to plot directly onto.
+
+    `line`: str="45":
+        Whether or not to also draw a 45-degree line on each `ax` in Axes. This
+        helps orient the quantiles plotted.
+
+    Returns nothing, plots onto `ax` directly.
+    """
+    data_sorted = np.sort(data.to_numpy())
+
+    try:
+        # 1. Attempt the standard statsmodels Q-Q plot
+        sm.qqplot(
+            data,
+            dist     = cast(Any, dist),
+            distargs = distargs,
+            loc      = cast(int, loc),
+            scale    = cast(int, scale),
+            fit      = False,
+            line     = line,
+            ax       = ax
+        )
+    except RuntimeError as rerr:
+        logger.info(f"Runtime error with {data.name}: {rerr}.")
+        # FALLBACK: Solver failed. Generate theoretical quantiles via simulation
+        n = len(data_sorted)
+
+        # Simulate a massive pool from the fit to get stable, clean quantiles
+        # using 100k points, or matching the exact size if the dataset is larger
+        sim_size = max(100_000, n)
+        sim_data = dist.rvs(
+            *distargs,
+            loc          = loc,
+            scale        = scale,
+            size         = sim_size,
+            random_state = rng
+        )
+
+        # Extract the exact matching percentiles from the simulation using
+        # Blom's plotting position
+        percentages = (np.arange(1, n + 1) - 0.375) / (n + 0.25)
+        theoretical_quantiles = np.percentile(sim_data, percentages * 100)
+
+        # Plot the data points directly onto the grid's axes
+        ax.scatter(
+            theoretical_quantiles,
+            data_sorted,
+            edgecolors="none"
+        )
+
+        if line == "45":
+            min_val = min(theoretical_quantiles.min(), data_sorted.min())
+            max_val = max(theoretical_quantiles.max(), data_sorted.max())
+            ax.plot([min_val, max_val], [min_val, max_val], c="red", ls="-")
+
+
+def distribution_diagnostics(
+        data: pd.DataFrame,
+        distribution: ContinuousDistribution,
+        rng: Generator,
+        *,
+        diff: bool=True,
+        qq: bool=False,
+        hist: bool=False,
+        llf: bool=False,
+        bins: int=50,
+        figsize: tuple[int|float, int|float]=(14, 6.5),
+        title: str|None=None,
+        xlabel: str="Increment",
+    ) -> dict[str, dict[str, Any]]:
+    """
+    Run distribution diagnostics on each column of a DataFrame.
+
+    Parameters
+    `data` : pandas.DataFrame:
+        Input time-series/dataframe. Each column is treated independently.
+
+    `distribution` : scipy.stats distribution, default=norm:
+        A scipy.stats continuous distribution, e.g. norm, t, laplace, etc.
+
+    `rng` : Generator:
+        A seeded NumPy random Generator instance.
+
+    `diff` : bool, default=True:
+        If True, use discrete first differences of each column before fitting.
+        If False, use the columns as-is.
+
+    `qq` : bool, default=False:
+        Produce Q-Q plots against the fitted distribution.
+
+    `hist` : bool, default=False:
+        Produce histograms with the fitted distribution PDF overlaid.
+
+    `llf` : bool, default=False:
+        Calculate and print the mean log-likelihood for each column.
+
+    `bins` : int, default=50:
+        Number of histogram bins.
+
+    `figsize` : tuple, default=(15, 10):
+        Figure size.
+
+    `title` : str, optional:
+        Overall figure title.
+
+    `xlabel` : str, default="Increment":
+        X-axis label for histograms.
+
+    Returns a dictionary, keyed by column name, containing the fitted parameters
+    and mean log-likelihood.
+    """
+
+    if not any((qq, hist, llf)):
+        raise ValueError("At least one of qq, hist, or llf must be True.")
+
+    # Fit distributions / calculate LLFs ---------------------------------------
+    results = {}
+    for col in data.columns:
+        values = data[col].diff().dropna() if diff else data[col].dropna()
+        params = distribution.fit(values)
+        log_likelihood = distribution.logpdf(values, *params).mean()
+
+        n = len(values)
+        k = len(params)
+        bic = k * np.log(n) - 2 * (log_likelihood * n)
+
+        results[col] = {
+            "params": params,
+            "log_likelihood": log_likelihood,
+            "bic": bic,
+        }
+
+        logger.info(
+            f"{datetime.now()}: "
+            f"{col}: "
+            f"mean log-likelihood={log_likelihood:.4f}, "
+            f"BIC={bic:.4f}"
+        )
+
+    # QQ plots -----------------------------------------------------------------
+    if qq:
+        fig, axes = plt.subplots(
+            nrows   = 2,
+            ncols   = 6,
+            figsize = figsize,
+            sharex  = True,
+            squeeze = False
+        )
+        axes = np.ravel(axes)
+
+        for col, ax in zip(data.columns, axes):
+            values = (
+                data[col].diff().dropna()
+                if diff
+                else data[col].dropna()
+            )
+
+            if values.empty:
+                logger.warning("Skipping empty column %s.", col)
+                continue
+
+            params = results[col]["params"]
+            shape_params = params[:-2]
+            loc, scale = params[-2:]
+
+            safe_qqplot(
+                data     = values,
+                dist     = distribution,
+                distargs = shape_params,
+                loc      = loc,
+                scale    = scale,
+                rng      = rng,
+                line     = "45",
+                ax       = ax,
+            )
+
+            ax.set_title(col)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
+            ax.grid()
+
+        # Hide unused axes
+        for ax in axes[len(data.columns):]:
+            ax.set_visible(False)
+
+        fig.tight_layout()
+        fig.supxlabel("Theoretical Quantiles", fontsize="x-large")
+        fig.supylabel("Sample Quantiles", fontsize="x-large")
+        fig.suptitle(f"dX ~ {distribution.name}", fontsize="x-large")
+        fig.tight_layout()
+        plt.show()
+
+    # Histograms + fitted PDF --------------------------------------------------
+    if hist:
+        fig, axes = plt.subplots(
+            nrows=3,
+            ncols=4,
+            figsize=figsize
+        )
+        axes = np.ravel(axes)
+
+        for col, ax in zip(data.columns, axes):
+            values = (
+                data[col].diff().dropna()
+                if diff
+                else data[col].dropna()
+            )
+
+            params = results[col]["params"]
+
+            # Empirical histogram
+            ax.hist(
+                values,
+                bins=bins,
+                density=True,
+                label="empirical",
+            )
+
+            # Fitted PDF
+            ref_x = np.linspace(
+                values.min(),
+                values.max(),
+                10_000,
+            )
+
+            ref_pdf = distribution.pdf(ref_x, *params)
+
+            ax.plot(ref_x, ref_pdf, label=f"{distribution.name} fit")
+
+            # Distribution parameters
+            param_names = distribution.shapes
+
+            shape_names = (
+                distribution.shapes.split(", ")
+                if distribution.shapes
+                else []
+            )
+
+            param_names = [*shape_names, "loc", "scale"]
+
+            param_text = ", ".join(
+                f"{name}={value:.2f}"
+                for name, value in zip(param_names, params)
+            )
+
+            ax.set_title(f"{col} ({param_text})")
+            ax.set_xlabel(xlabel)
+            ax.set_ylabel("Density")
+            ax.legend()
+            ax.grid()
+
+        # Hide unused axes
+        for ax in axes[len(data.columns):]:
+            ax.set_visible(False)
+
+        if title is None:
+            title = (
+                f"Histogram of increments vs. "
+                f"fitted {distribution.name} distribution"
+            )
+
+        fig.suptitle(title)
+        fig.tight_layout()
+        plt.show()
+
+    return results
+
+
+def draw_copulae(
+        X: pd.DataFrame,
+        y: pd.Series,
+        axes: np.ndarray,
+    ) -> None:
+    """
+    Plot the empirical rank-based copulae on a provided set of matplotlib Axes
+    objects. Each regressor column in `X` is ranked, as is `y`, and the KDE of
+    (rank(X), rank(y)) is then plotted directly onto onto each ax in `axes`.
+
+    Parameters:
+    `X`: pd.DataFrame:
+        The design matrix of exogenous regressors. Each regressor is plotted vs.
+        `y`.
+
+    `y`: pd.Series:
+        The target column. Each regressor in `X` is plotted against `y`.
+
+    `axes`: np.ndarray:
+        A set of matplotlib Axes objects. The length of this array is expected
+        to equal the number of columns in `X`.
+
+    Returns nothing, plots onto each ax in `axes` directly.
+    """
+    y_ranks = rankdata(y) / (len(y) + 1)
+
+    for col, ax in zip(X.columns, axes):
+        ax.clear()
+
+        x = X[col]
+        x_ranks = rankdata(x) / (len(x) + 1)
+
+        sns.kdeplot(
+            x=x_ranks,
+            y=y_ranks,
+            cmap="Reds",
+            fill=True,
+            thresh=0.05,
+            ax=ax,
+        )
+
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.set_title(col)
+        ax.grid(True)
+
+
+def animate_copulae(
+        X: pd.DataFrame,
+        y: pd.Series,
+        window: int=30,
+        step: int=30,
+        nrows: int=3,
+        ncols: int=4,
+        figsize: tuple[float, float]=(14, 10),
+        interval: int=500,
+    ) -> tuple[Figure, FuncAnimation]:
+    """
+    Animate empirical copulae over successive windows.
+
+    Parameters:
+    window: int:
+        Number of observations per frame.
+
+    step: int:
+        Number of observations to advance each frame.
+        step = window -> non-overlapping windows
+        step = 1      -> rolling window
+
+    Returns a tuple containing matplotlib Figure and Animation objects.
+    """
+
+    fig, axes = plt.subplots(
+        nrows   = nrows,
+        ncols   = ncols,
+        figsize = figsize,
+    )
+
+    axes = axes.ravel()
+    n_frames = (len(X) - window) // step + 1
+
+    def update(frame: int) -> Iterable[Artist]:
+        start = frame * step
+        end = start + window
+
+        X_win = X.iloc[start:end]
+        y_win = y.iloc[start:end]
+
+        draw_copulae(X_win, y_win, axes)
+
+        start_date = X_win.index[0]
+        end_date = X_win.index[-1]
+
+        fig.suptitle(
+            f"Window {frame + 1}/{n_frames}   "
+            f"Rows {start_date:%d %b %Y}:{end_date:%d %b %Y}",
+            fontsize=14,
+        )
+
+        fig.tight_layout()
+        return ()
+
+
+    ani = FuncAnimation(
+        fig,
+        update,
+        frames=n_frames,
+        interval=interval,
+        repeat=True,
+        blit=False,
+    )
+
+    return fig, ani
 
