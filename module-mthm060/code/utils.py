@@ -18,7 +18,11 @@ def check_max(n: int, max_n: int, what: str) -> None:
         )
 
 
-def get_file_list(basedir: Path|str, glob: str="*.csv") -> list[Path]:
+def get_file_list(
+        basedir: Path|str,
+        glob: str="*.csv",
+        sort_mtime: bool=False
+    ) -> list[Path]:
     """
     Returns a list of all files in `basedir` that end with `regex`.
 
@@ -35,6 +39,13 @@ def get_file_list(basedir: Path|str, glob: str="*.csv") -> list[Path]:
     _basedir = Path(basedir)
     files = list(_basedir.rglob(glob))
     logger.info(f"{datetime.now()}: Found {len(files)} files.")
+
+    if sort_mtime:
+        files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        logger.info(
+            f"{datetime.now()}: Sorted to most recent first, by machine time."
+        )
+
     return files
 
 
