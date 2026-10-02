@@ -52,6 +52,11 @@ def main(
     dates = df.index.unique().sort_values()
     data_ax = ["strike", "iv", "K", "expiry_date", "years_to_expiry"]
 
+    logger.info(
+        f"{datetime.now()}: Starting SSVI calibration loop over {len(dates)} "
+        "dates..."
+    )
+
     ssvi_params = {}
     for dt in dates:
         subdf = (
@@ -62,7 +67,7 @@ def main(
         )
 
         logger.info(
-            f"{datetime.now()}: Data for date `{dt}` is shaped {subdf.shape}."
+            f"{datetime.now()}: Data for date `{dt}` shaped {subdf.shape}."
         )
 
         # for each expiry on that specific date, we need atm variance
@@ -96,6 +101,8 @@ def main(
                 "caused an issue. Skipping."
             )
             continue
+
+        logger.info(f"{datetime.now()}: Calibrated SSVI for {dt}.")
 
         extra_params = {
             "expiry_date": subdf["expiry_date"].to_numpy(),

@@ -2,6 +2,7 @@ import logging
 import numpy as np
 import pandas as pd
 
+from datetime import datetime
 from scipy.optimize import differential_evolution, NonlinearConstraint
 
 logging.basicConfig()
@@ -53,6 +54,7 @@ def compute_atm_var(df: pd.DataFrame) -> float:
             right = df["iv"].iloc[-1]
         )
 
+    logger.info(f"{datetime.now()}: Computed ATM variance.")
     return (theta**2)*time_to_atm
 
 
