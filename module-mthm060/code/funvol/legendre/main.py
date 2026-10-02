@@ -18,8 +18,13 @@ logger.setLevel(logging.INFO)
 # ------------------------------------------------------------------------------
 
 def main(data_reserve: Path|str, n_o: int=4) -> None:
-    files = get_file_list(data_reserve, glob="*_om-surfaces.csv")
-    df = pd.concat([pd.read_csv(f, parse_dates=["date"]) for f in files])
+    files = get_file_list(
+        data_reserve,
+        glob       = "*_om-surfaces.csv",
+        sort_mtime = True
+    )
+
+    df = pd.read_csv(files[0], parse_dates=["date"])
 
     needed_cols = set(("date", "delta", "time", "cp", "iv"))
     diff = needed_cols.difference(df.columns)
@@ -27,7 +32,7 @@ def main(data_reserve: Path|str, n_o: int=4) -> None:
         raise ValueError(
             f"{datetime.now()}: The following columns are missing in the "
             f"dataset loaded from `{data_reserve}`: {diff}. Note that `date` "
-            "must be a column in this case, not a pd.DatetimeIndex."
+            "must be a datetime64 column in this case, not a pd.DatetimeIndex."
         )
 
     coeffs_ce = legendre_OLS(data=df, cp="CE", n_o=n_o)
