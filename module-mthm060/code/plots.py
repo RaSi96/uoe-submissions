@@ -1094,9 +1094,12 @@ def safe_qqplot(
             line     = line,
             ax       = ax
         )
-    except RuntimeError as rerr:
-        logger.info(f"Runtime error with {data.name}: {rerr}.")
-        # FALLBACK: Solver failed. Generate theoretical quantiles via simulation
+    except Exception as e:
+        logger.warning(
+            f"{datetime.now()}: Solver failed for {data.name}: {e}. Generating "
+            "theoretical quantiles via simulation."
+        )
+
         n = len(data_sorted)
 
         # Simulate a massive pool from the fit to get stable, clean quantiles
