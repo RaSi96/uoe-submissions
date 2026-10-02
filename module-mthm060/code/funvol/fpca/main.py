@@ -17,30 +17,29 @@ logger.setLevel(logging.INFO)
 
 # ------------------------------------------------------------------------------
 
-def main(
-        data_reserve_calls: Path|str|None=None,
-        data_reserve_puts: Path|str|None=None,
-        var_threshold: float=0.996
-    ) -> None:
-    # no `needed_cols` check, just trust the caller to know what they're sending
-    # in. This part of the pipeline just performs regular FPCA on a dataset.
-    if not (data_reserve_calls and data_reserve_puts):
-        raise ValueError(
-            f"{datetime.now()}: At least one directory out of "
-            "`data_reserve_calls` or `data_reserve_puts` must be specified."
-        )
+def main(data_reserve: Path|str, var_threshold: float=0.996) -> None:
+    # data_reserve = "./funvol/legendre/artefacts"
 
-    for id, dir in zip(["ce", "pe"], [data_reserve_calls, data_reserve_puts]):
-        files = get_file_list(dir, glob=f"*_legendre-coeffs-{id}.csv")
-        df = pd.concat([pd.read_csv(f, index_col=[0]) for f in files])
+    files = get_file_list(
+        basedir    = data_reserve,
+        glob       = "*_legendre-coeffs*.csv",
+        sort_mtime = True
+    )
 
-        princomps, eigsurfs, pca = functional_PCA(df, var_threshold)
+    # already sorted by mtime, so we can exploit `next` because it returns the
+    # first occurrence in an Iterable, then stops
+    for id in ["ce", "pe"]:
+        artefact = next(p for p in files if f"-{id}." in p.name)
+        coeffs = pd.read_csv(artefact, parse_dates=[0], index_col=[0])
+        logger.info(f"{datetime.now()}: Loaded dataset: {coeffs.shape}")
 
-        neural_df = pca.transform(df.sub(df.mean()))
+        princomps, eigsurfs, pca = functional_PCA(coeffs, var_threshold)
+
+        neural_df = pca.transform(coeffs.sub(coeffs.mean()))
         neural_df = pd.DataFrame(
-            data = neural_df,
-            index = df.index,
-        columns = [f"psi_{i+1}" for i in range(len(neural_df.T))]
+            data    = neural_df,
+            index   = coeffs.index,
+            columns = [f"psi_{i+1}" for i in range(len(neural_df.T))]
         )
 
         logger.info(
@@ -50,7 +49,6 @@ def main(
 
         runtime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         basedir = os.path.join(os.path.dirname(__file__), "artefacts")
-
         filename = f"{basedir}/{runtime}_neural_{id}.csv"
         neural_df.reset_index().to_csv(filename, index=False)
         logger.info(
@@ -82,14 +80,10 @@ if __name__=="__main__":
     parser = ArgumentParser(description="Perform FPCA on (a) given dataset(s)")
 
     parser.add_argument(
-        "--data_reserve_calls",
+        "--data_reserve",
         type     = Path,
-        help     = "Directory of the call-side file artefact.",
-    )
-    parser.add_argument(
-        "--data_reserve_puts",
-        type     = Path,
-        help     = "Directory of the put-side file artefact.",
+        help     = "Directory of the dataset to perform FPCA on",
+        required = True,
     )
     parser.add_argument(
         "--var_threshold",
