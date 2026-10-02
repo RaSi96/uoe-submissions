@@ -61,7 +61,9 @@ def main(
             .sort_values(["expiry_date", 'K'])
         )
 
-        logger.info(f"{datetime.now()}: Data for date `{dt}`: {subdf.shape}.")
+        logger.info(
+            f"{datetime.now()}: Data for date `{dt}` is shaped {subdf.shape}."
+        )
 
         # for each expiry on that specific date, we need atm variance
         atm_dict = {
@@ -86,7 +88,14 @@ def main(
         market_total_var = subdf["market_total_var"].to_numpy()
         ytd              = subdf["years_to_expiry"].to_numpy()
 
-        opt_ssvi = fit_ssvi_smiles(moneyness, theta, market_total_var, ytd)
+        try:
+            opt_ssvi = fit_ssvi_smiles(moneyness, theta, market_total_var, ytd)
+        except Exception as e:
+            logger.exception(
+                f"{datetime.now()}: Data for {dt} has NaNs, or otherwise "
+                "caused an issue. Skipping."
+            )
+            continue
 
         extra_params = {
             "expiry_date": subdf["expiry_date"].to_numpy(),
@@ -105,49 +114,6 @@ def main(
     logger.info(
         f"{datetime.now()}: SSVI fitted parameters saved to `{filename}`"
     )
-
-    # if plot_ssvi_params:
-    #     expiries = sorted([str(i) for i in df["expiry_date"].unique().date])
-    #     risk_reversals = {}
-
-    #     for dt, data in ssvi_params.items():
-    #         # need this to compute time to expiry, and subsequently delta for RR
-    #         ddiff = pd.to_datetime(data["expiry_date"]) - pd.Timestamp(dt)
-
-    #         _ = pd.DataFrame({
-    #             "ssvi"       : data["ssvi_smile"],
-    #             'K'          : data["moneyness"],
-    #             "expiry_date": data["expiry_date"],
-    #             "iv"         : data["market_iv"],
-    #             "tau"        : ddiff.total_seconds()/(60*60*24*365)
-    #         })
-
-    #         for exp in expiries:
-    #             mask = _["expiry_date"].eq(exp)
-    #             subdf = _.loc[mask].set_index('K').drop(columns="expiry_date")
-
-    #             if exp == expiries[-1]:
-    #                 rr_svi = compute_risk_rev(
-    #                     ln_money = subdf.index,
-    #                     iv       = subdf["ssvi"],
-    #                     tau      = subdf["tau"],
-    #                 )
-
-    #                 risk_reversals[dt] = rr_svi
-
-    #     fig = plot_ssvi_parameters(ssvi_params, risk_reversals, 0.25)
-    #     plotname = f"{basedir}/{runtime}_ssvi_params.png"
-    #     fig.savefig(plotname)
-
-    # if plot_ssvi_surfaces:
-    #     fig = plot_ssvi_interp_surfaces(
-    #         ssvi_params,
-    #         start = plot_window_start,
-    #         end   = plot_window_end
-    #     )
-
-    #     plotname = f"{basedir}/{runtime}_ssvi_surfaces.png"
-    #     fig.savefig(plotname)
 
     return
 
