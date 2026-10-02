@@ -22,6 +22,13 @@ def train_test_split(
     retain for training. The ratio is `train_pct`:(1-`train_pct`), train:test.
     """
     N = int( len(data)*train_pct )
+
+    if lags >= N:
+        raise ValueError(
+            f"{datetime.now()}: Cannot use more lags than the length of the "
+            f"dataset. Data length={N}, requested lags={lags}."
+        )
+
     train = data.iloc[:N, :]
     test = data.iloc[N-lags:, :]
 
