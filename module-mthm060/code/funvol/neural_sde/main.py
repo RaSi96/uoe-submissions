@@ -67,6 +67,7 @@ def main(
     )
 
     neural_df = pd.read_csv(files[0], parse_dates=[0], index_col=[0])
+    logger.info(f"{datetime.now()}: Loaded neural df.")
 
     files = get_file_list(
         basedir    = detrended_price_reserve,
@@ -75,6 +76,7 @@ def main(
     )
 
     price = pd.read_csv(files[0], parse_dates=[0], index_col=[0])
+    logger.info(f"{datetime.now()}: Loaded detrended underlying price.")
 
     neural_df = neural_df.join(price, how="inner")
 
