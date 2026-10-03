@@ -96,14 +96,14 @@ def main(
 
     N = len(neural_df.T)
 
-    nn_params_ce = {
+    nn_params = {
         "n_in"    : N,
         "n_hidden": N,
         "n_layers": 3,
         "n_out"   : N,
     }
 
-    nsde = NeuralSDE(nn_params_ce).to(device)
+    nsde = NeuralSDE(nn_params).to(device)
     logger.info(f"{datetime.now()}: Prepared neural SDE.")
 
     # --------------------------------------------------------------------------

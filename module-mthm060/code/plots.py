@@ -6,6 +6,7 @@ import pandas as pd
 import seaborn as sns
 import statsmodels.api as sm
 
+from collections import OrderedDict
 from collections.abc import Iterable, Mapping
 from datetime import datetime
 from matplotlib.artist import Artist
@@ -1457,3 +1458,91 @@ def animate_copulae(
 
     return fig, ani
 
+
+def plot_training_stats(
+        df_eloss: pd.DataFrame,
+        df_stats: pd.DataFrame,
+        loss_name: str,
+        log_loss: bool=False,
+        figsize: tuple[int, int]=(15, 30),
+    ) -> Figure:
+    fig, axes = plt.subplots(
+        nrows   = df_stats["name"].nunique()+1,
+        ncols   = 1,
+        figsize = figsize,
+    )
+
+    axes = np.ravel(axes)
+    axes[0].plot(df_eloss)
+    axes[0].set_xlabel("Epoch")
+    axes[0].set_ylabel(loss_name)  # "log-MSE" or "-LLF+PIT"
+
+    if log_loss:
+        axes[0].set_yscale("log")
+
+    axes[0].set_title(f"Epoch-wise {loss_name} loss")
+    axes[0].grid(visible=True, axis="both")
+
+    stat_cols = ["epoch", "eig1", "reff", "stable_rank", "num_columns"]
+    for name, ax in zip(df_stats["name"].unique(), axes[1:]):
+        _df  = (
+            df_stats
+            .loc[df_stats["name"].eq(name), stat_cols]
+            .set_index("epoch")
+        )
+        ax = _df.plot(grid=True, ax=ax)
+        ax.set_title(f"drift.{name}")
+        ax.set_xlabel("Epoch")
+        ax.set_ylabel("Matrix Dimensions")
+
+    fig.tight_layout()
+    return fig
+
+
+def plot_weight_spectra(weights: OrderedDict) -> Figure:
+    # turns out that, if you register a tensor buffer, it appears as a weight
+    # tensor later lol. there's no point in inspecting the tril/identity buffers
+    # stored just for Cholesky decomposition, hence me ignoring those tensors.
+    _weights = {
+        n: p for n, p in weights.items()
+        if p.ndim==2
+        and "tril" not in n
+        and 'I' not in n
+    }
+
+    names = list(_weights.keys())
+    params = list(_weights.values())
+
+    fig, axes = plt.subplots(nrows=2, ncols=7, figsize=(20, 7.5), sharey=True)
+    axes = np.ravel(axes)
+
+    for i, (p, ax) in enumerate(zip(params, axes)):
+        name = names[i]
+        vals = p.numpy()
+        covr = vals.T @ vals
+        eigs = np.linalg.eigvalsh(covr)
+        eigs = np.maximum(eigs, 1e-12)
+
+        eigs_z = (eigs-eigs.mean()) / eigs.std()
+
+        ax.hist(eigs_z, bins=6, density=True)
+        ax.grid()
+        ax.set_xlabel("")
+        ax.set_ylabel("")
+        ax.set_title(name)
+
+        if i % 7 != 6:
+            ax.tick_params(axis="y", left=False, labelleft=False)
+        else:
+            ax.tick_params(
+                axis="y", right=True, labelright=True, left=False, labelleft=False
+        )
+
+    fig.supxlabel("Singular values", fontsize="x-large")
+    fig.supylabel("Z-std Density", fontsize="x-large")
+    fig.suptitle(
+        "Singular Value spectrum of NSDE layers (nbins=6)",
+        fontsize = "x-large"
+    )
+    fig.tight_layout(rect=(0.01, 0, 1, 0.98))
+    return fig
