@@ -44,10 +44,10 @@ def main(
             f"`{num_epochs}` instead."
         )
 
-    if train_pct >= 1:
+    if not (0 <= train_pct <= 1):
         raise ValueError(
             f"{datetime.now()}: Cannot use 100% or more of data for training. "
-            f"Try reducing `train_pct` (received `{train_pct}`)."
+            f"Ensure `train_pct` is in (0, 1) (received `{train_pct}`)."
         )
 
     n_epochs = np.arange(1, num_epochs+1, 1)
@@ -161,6 +161,8 @@ def main(
     )
     logger.info(f"{datetime.now()}: Stage 3 training completed.")
 
+    # --------------------------------------------------------------------------
+
     runtime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     basedir = os.path.join(os.path.dirname(__file__), "artefacts")
     filename = f"{basedir}/{runtime}_neural_model_{wing}.pt"
@@ -169,43 +171,43 @@ def main(
         f"{datetime.now()}: Trained neural model saved to `{filename}`."
     )
 
-    filename = f"{basedir}/{runtime}_drift_epoch_losses.csv"
+    filename = f"{basedir}/{runtime}_drift_epoch_losses_{wing}.csv"
     drift_eloss.to_csv(filename)
     logger.info(
         f"{datetime.now()}: Stage 1 epoch-wise losses saved to {filename}."
     )
 
-    filename = f"{basedir}/{runtime}_drift_stats.csv"
+    filename = f"{basedir}/{runtime}_drift_stats_{wing}.csv"
     drift_stats.reset_index().to_csv(filename, index=False)
     logger.info(
         f"{datetime.now()}: Stage 1 training statistics saved to {filename}."
     )
 
-    filename = f"{basedir}/{runtime}_diffusion_epoch_losses.csv"
+    filename = f"{basedir}/{runtime}_diffusion_epoch_losses_{wing}.csv"
     diffn_eloss.to_csv(filename)
     logger.info(
         f"{datetime.now()}: Stage 2 epoch-wise losses saved to {filename}."
     )
 
-    filename = f"{basedir}/{runtime}_diffusion_stats.csv"
+    filename = f"{basedir}/{runtime}_diffusion_stats_{wing}.csv"
     diffn_stats.reset_index().to_csv(filename, index=False)
     logger.info(
         f"{datetime.now()}: Stage 2 training statistics saved to {filename}."
     )
 
-    filename = f"{basedir}/{runtime}_combined_epoch_losses.csv"
+    filename = f"{basedir}/{runtime}_combined_epoch_losses_{wing}.csv"
     cmb_eloss.to_csv(filename)
     logger.info(
         f"{datetime.now()}: Stage 3 epoch-wise losses saved to {filename}."
     )
 
-    filename = f"{basedir}/{runtime}_combined_stats.csv"
+    filename = f"{basedir}/{runtime}_combined_stats_{wing}.csv"
     cmb_stats.reset_index().to_csv(filename, index=False)
     logger.info(
         f"{datetime.now()}: Stage 3 training statistics saved to {filename}."
     )
 
-    filename = f"{basedir}/{runtime}_test_df.csv"
+    filename = f"{basedir}/{runtime}_test_df_{wing}.csv"
     test.reset_index().to_csv(filename, index=False)
     logger.info(
         f"{datetime.now()}: Testing dataset for inference saved to {filename}."

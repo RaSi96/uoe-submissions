@@ -71,7 +71,7 @@ def train_stage_1(
     Trains drift only. Returns model, epoch_losses, weight_stats.
     """
     if len(loader) <= 0:
-        # is someone trying something funnier?
+        # is someone trying something funny?
         raise ValueError(
             f"{datetime.now()}: `loader` must have at least one batch, received "
             f"`{len(loader)}` instead."
@@ -129,23 +129,16 @@ def train_stage_2(
     """
     Trains diffusion only. Returns model, epoch_losses, weight_stats, alpha.
     """
-    if n_epochs <= 0:
-        # is someone trying something funny?
-        raise ValueError(
-            f"{datetime.now()}: `n_epochs` must be greater than 0, received "
-            f"`{n_epochs}` instead."
-        )
-
     if len(loader) <= 0:
-        # is someone trying something funnier?
+        # is someone trying something funny?
         raise ValueError(
             f"{datetime.now()}: `loader` must have at least one batch. Received "
             f"`{len(loader)}` instead."
         )
 
     # some linters detect paths where these variables are possibly unbounded.
-    llf_loss = torch.empty()
-    pit_loss = torch.empty()
+    llf_loss = torch.empty(0)
+    pit_loss = torch.empty(0)
 
     # stage 2 trains the diffusion only and disables drift.
     for p in model.drift.parameters():
@@ -175,8 +168,8 @@ def train_stage_2(
                 mu = model.drift(history)
 
             Sigma = model.diffusion(history)
-            llf_loss: torch.Tensor = log_likelihood_loss(mu, Sigma, dT, dX)
-            pit_loss: torch.Tensor = density_loss(mu, Sigma, dT, dX)
+            llf_loss = log_likelihood_loss(mu, Sigma, dT, dX)
+            pit_loss = density_loss(mu, Sigma, dT, dX)
             dif_loss = llf_loss + pit_loss
             dif_loss.backward()
             optim_diffusion.step()
@@ -214,15 +207,8 @@ def train_stage_3(
     """
     Trains drift & diffusion. Returns model, epoch_losses, weight_stats.
     """
-    if n_epochs <= 0:
-        # is someone trying something funny?
-        raise ValueError(
-            f"{datetime.now()}: `n_epochs` must be greater than 0, received "
-            f"`{n_epochs}` instead."
-        )
-
     if len(loader) <= 0:
-        # is someone trying something funnier?
+        # is someone trying something funny?
         raise ValueError(
             f"{datetime.now()}: `loader` must have at least one batch. Received "
             f"`{len(loader)}` instead."
