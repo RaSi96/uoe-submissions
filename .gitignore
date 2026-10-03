@@ -220,3 +220,4 @@ __marimo__/
 *.pkl
 *.npy
 *.joblib
+*.pt
