@@ -1,3 +1,4 @@
+# Dissertation Code
 There are many moving parts in this dissertation. This document is to help orient you, dear reader, with my code structure.
 
 I've this using a pipeline-artefact type design. Each portion of the pipeline takes in data, transforms it, and saves an artefact to disk for subsequent pipes to consume and transform. Artefacts can also be analysed separately from the main pipeline. I chose this for a few reasons:
