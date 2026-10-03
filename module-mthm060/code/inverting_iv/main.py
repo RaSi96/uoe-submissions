@@ -1,4 +1,5 @@
 import logging
+import os
 import pandas as pd
 
 from argparse import ArgumentParser
@@ -141,6 +142,7 @@ def main(
                 "oi_chg",
             ]
 
+            basedir = os.path.join(os.path.dirname(__file__), "artefacts")
             filename = f"{basedir}/{year}-{mo}-allbhav-iv.csv"
 
             (

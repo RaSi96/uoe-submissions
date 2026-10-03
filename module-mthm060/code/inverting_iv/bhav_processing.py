@@ -150,6 +150,9 @@ def filter_data(df: pd.DataFrame) -> pd.DataFrame:
 
     Returns a modified `df`.
     """
+    # we probably shouldn't hardcode "NIFTY" as the underlying instrument...
+    # also, this entire pipeline is centred around a single underlying asset,
+    # which we probably could generalise... TODO
     mask = (
         df["instrument"].eq("OPTIDX")
         & df["symbol"].eq("NIFTY")

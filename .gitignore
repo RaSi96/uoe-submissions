@@ -214,3 +214,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Datasets
+*.csv
+*.pkl
+*.npy
+*.joblib
+*.pt

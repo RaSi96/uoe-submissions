@@ -1,0 +1,102 @@
+import logging
+import pandas as pd
+import numpy as np
+import os
+
+from argparse import ArgumentParser
+from datetime import datetime
+from joblib import dump
+from pathlib import Path
+
+from .fpca import functional_PCA
+from code.utils import get_file_list
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+# ------------------------------------------------------------------------------
+
+def main(data_reserve: Path|str, var_threshold: float=0.996) -> None:
+    # data_reserve = "./funvol/legendre/artefacts"
+
+    files = get_file_list(
+        basedir    = data_reserve,
+        glob       = "*_legendre-coeffs*.csv",
+        sort_mtime = True
+    )
+
+    # already sorted by mtime, so we can exploit `next` because it returns the
+    # first occurrence in an Iterable, then stops
+    for id in ["ce", "pe"]:
+        artefact = next(p for p in files if f"-{id}." in p.name)
+        coeffs = pd.read_csv(artefact, parse_dates=[0], index_col=[0])
+        logger.info(f"{datetime.now()}: Loaded dataset: {coeffs.shape}")
+
+        princomps, eigsurfs, pca = functional_PCA(coeffs, var_threshold)
+
+        neural_df = pca.transform(coeffs.sub(coeffs.mean()))
+        neural_df = pd.DataFrame(
+            data    = neural_df,
+            index   = coeffs.index,
+            columns = [f"psi_{i+1}" for i in range(len(neural_df.T))]
+        )
+
+        logger.info(
+            f"{datetime.now()}: Neural {id} condition number: "
+            f"{np.linalg.cond(neural_df):.4f}."
+        )
+
+        runtime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        basedir = os.path.join(os.path.dirname(__file__), "artefacts")
+        filename = f"{basedir}/{runtime}_neural_{id}.csv"
+        neural_df.reset_index().to_csv(filename, index=False)
+        logger.info(
+            f"{datetime.now()}: FPCA coefficient data saved to `{filename}`."
+        )
+
+        filename = f"{basedir}/{runtime}_princomps_{id}.npy"
+        np.save(filename, princomps)
+        logger.info(
+            f"{datetime.now()}: Eigenvalues '{id}' saved to `{filename}`."
+        )
+
+        filename = f"{basedir}/{runtime}_eigsurfs_{id}.npy"
+        np.save(filename, eigsurfs)
+        logger.info(
+            f"{datetime.now()}: Eigensurfaces '{id}' saved to `{filename}`."
+        )
+
+        filename = f"{basedir}/{runtime}_pca_{id}.joblib"
+        dump(pca, filename)
+        logger.info(
+            f"{datetime.now()}: PCA object '{id}' saved to `{filename}`."
+        )
+
+        logger.info(f"{datetime.now()}: Processed '{id}'.")
+
+
+if __name__=="__main__":
+    parser = ArgumentParser(description="Perform FPCA on (a) given dataset(s)")
+
+    parser.add_argument(
+        "--data_reserve",
+        type     = Path,
+        help     = "Directory of the dataset to perform FPCA on",
+        required = True,
+    )
+    parser.add_argument(
+        "--var_threshold",
+        type     = float,
+        help     = (
+            "Variance explained threshold, determining how many princomps to "
+            "retain. Defaults to 99.6% (0.996), meaning only those many "
+            "principal components that explain 99.6% of data variance will be "
+            "retained."
+        ),
+        default  = 0.996
+    )
+
+    args = parser.parse_args()
+
+    main(**vars(args))

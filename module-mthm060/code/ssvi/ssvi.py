@@ -2,6 +2,7 @@ import logging
 import numpy as np
 import pandas as pd
 
+from datetime import datetime
 from scipy.optimize import differential_evolution, NonlinearConstraint
 
 logging.basicConfig()
@@ -37,9 +38,13 @@ def compute_atm_var(df: pd.DataFrame) -> float:
         return 0.0
 
     atm = np.isclose(df['K'], 0.0, rtol=1e-03, atol=1e-03)
+    fnz = np.flatnonzero(atm)
 
-    if atm.any():
-        theta = df.loc[atm, "iv"].values.item()
+    # with the tolerance bands, it is possible that we end up with more than 1
+    # candidate option that's ATM. this is unacceptable, so in this case we'll
+    # opt for interpolation.
+    if atm.any() and len(fnz)==1:
+        theta = df.loc[atm, "iv"].to_numpy().item()
     else:
         theta = np.interp(
             x     = 0,
@@ -49,6 +54,7 @@ def compute_atm_var(df: pd.DataFrame) -> float:
             right = df["iv"].iloc[-1]
         )
 
+    logger.info(f"{datetime.now()}: Computed ATM variance.")
     return (theta**2)*time_to_atm
 
 

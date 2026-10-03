@@ -12,16 +12,16 @@ logger.setLevel(logging.INFO)
 # ------------------------------------------------------------------------------
 
 def get_option_delta(
-        K: pd.Series,
-        iv: pd.Series,
-        t_diff: pd.Series
+        K: pd.Series|np.ndarray,
+        iv: pd.Series|np.ndarray,
+        t_diff: pd.Series|np.ndarray,
     ) -> pd.Series | np.ndarray:
     """
-    Computes the delta (Greek) of a given option.
+    Computes the Delta (Greek) of a given option using log-forward-moneyness.
 
     Parameters:
     `K`: pd.Series:
-        Series of option strike prices.
+        Series of options log-forward-moneyness.
 
     `iv`: pd.Series:
         Model-implied volatilities of a set of options.
@@ -29,30 +29,20 @@ def get_option_delta(
     `t_diff`: pd.Series:
         Time to expiry, in years, of a set of options.
     """
-    numer = -K + (0.5*iv**2)*t_diff
+    numer = K + (0.5*iv**2)*t_diff
     denom = iv*np.sqrt(t_diff)
-
-    n_zeroes = numer.eq(0).sum()
-    d_zeroes = denom.eq(0).sum()
-    if n_zeroes+d_zeroes > 0:
-        logger.warning(
-            f"{datetime.now()}: {d_zeroes} zeroes in denominator, "
-            f"{n_zeroes} zeroes in numerator."
-        )
 
     d1 = numer/denom
 
-    # can infer this behaviour from the B-S boundary condition for t\to\tau
-    d1.loc[abs(d1).eq(np.inf)] = np.inf
-
     delta = norm.cdf(d1)
+    logger.info(f"{datetime.now()}: Computed option Delta(s).")
     return delta
 
 
 def compute_risk_rev(
-        ln_money: pd.Series,
-        iv: pd.Series,
-        tau: pd.Series,
+        ln_money: pd.Series|np.ndarray,
+        iv: pd.Series|np.ndarray,
+        tau: pd.Series|np.ndarray,
         Delta: float=0.25,
     ) -> float:
     """
@@ -80,7 +70,7 @@ def compute_risk_rev(
     particular Delta.
     """
     # recall that \Delta=0.50 is at the money (ATM)
-    deltas = get_option_delta(K=-ln_money, iv=iv, t_diff=tau)
+    deltas = get_option_delta(K=ln_money, iv=iv, t_diff=tau)
 
     iv_c = np.interp(Delta, deltas, iv)
     iv_p = np.interp(1-Delta, deltas, iv)
