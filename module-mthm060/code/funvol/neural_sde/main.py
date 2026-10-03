@@ -38,6 +38,12 @@ def main(
             f"Received `{wing}` instead."
         )
 
+    if num_epochs <= 0:
+        raise ValueError(
+            f"{datetime.now()}: `n_epochs` must be greater than 0, received "
+            f"`{num_epochs}` instead."
+        )
+
     if train_pct >= 1:
         raise ValueError(
             f"{datetime.now()}: Cannot use 100% or more of data for training. "
@@ -79,8 +85,8 @@ def main(
     train_dataset = NeuralSDEDataset(train)
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=False)
 
-    test_dataset = NeuralSDEDataset(test)
-    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+    # test_dataset = NeuralSDEDataset(test)
+    # test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
     logger.info(f"{datetime.now()}: Prepared dataloaders.")
 
@@ -100,19 +106,23 @@ def main(
 
     # --------------------------------------------------------------------------
 
+    logger.info(f"{datetime.now()}: Commencing stage 1 training...")
     nsde, drift_eloss, drift_stats = train_stage_1(
         model    = nsde,
         n_epochs = n_epochs,
         loader   = train_loader,
         device   = device,
     )
-    logger.info(f"{datetime.now()}: Stage 1 training completed.")
+
+    drift_eloss = pd.Series(drift_eloss, name="drift_eloss")
 
     drift_stats = (
         pd
         .DataFrame([s for s in drift_stats if s is not None])
         .sort_values(by=["epoch", "name"])
-        .assign(epoch_loss=drift_eloss)
+    )
+    logger.info(
+        f"{datetime.now()}: Stage 1 training completed, commencing stage 2..."
     )
 
     nsde, diffn_eloss, diffn_stats, alpha = train_stage_2(
@@ -122,13 +132,16 @@ def main(
         device   = device,
     )
 
+    diffn_eloss = pd.Series(diffn_eloss, name="drift_eloss")
+
     diffn_stats = (
         pd
         .DataFrame([s for s in diffn_stats if s is not None])
         .sort_values(by=["epoch", "name"])
-        .assign(epoch_loss=diffn_eloss)
     )
-    logger.info(f"{datetime.now()}: Stage 2 training completed.")
+    logger.info(
+        f"{datetime.now()}: Stage 2 training completed, commencing stage 3..."
+    )
 
     nsde, cmb_eloss, cmb_stats = train_stage_3(
         model    = nsde,
@@ -138,12 +151,13 @@ def main(
         device   = device,
     )
 
+    cmb_eloss = pd.Series(cmb_eloss, name="drift_eloss")
+
     # Welcome...to City 17! It's safer here...
     cmb_stats = (
         pd
         .DataFrame([s for s in cmb_stats if s is not None])
         .sort_values(by=["epoch", "name"])
-        .assign(epoch_loss=cmb_eloss)
     )
     logger.info(f"{datetime.now()}: Stage 3 training completed.")
 
@@ -155,10 +169,22 @@ def main(
         f"{datetime.now()}: Trained neural model saved to `{filename}`."
     )
 
+    filename = f"{basedir}/{runtime}_drift_epoch_losses.csv"
+    drift_eloss.to_csv(filename)
+    logger.info(
+        f"{datetime.now()}: Stage 1 epoch-wise losses saved to {filename}."
+    )
+
     filename = f"{basedir}/{runtime}_drift_stats.csv"
     drift_stats.reset_index().to_csv(filename, index=False)
     logger.info(
         f"{datetime.now()}: Stage 1 training statistics saved to {filename}."
+    )
+
+    filename = f"{basedir}/{runtime}_diffusion_epoch_losses.csv"
+    diffn_eloss.to_csv(filename)
+    logger.info(
+        f"{datetime.now()}: Stage 2 epoch-wise losses saved to {filename}."
     )
 
     filename = f"{basedir}/{runtime}_diffusion_stats.csv"
@@ -167,10 +193,22 @@ def main(
         f"{datetime.now()}: Stage 2 training statistics saved to {filename}."
     )
 
+    filename = f"{basedir}/{runtime}_combined_epoch_losses.csv"
+    cmb_eloss.to_csv(filename)
+    logger.info(
+        f"{datetime.now()}: Stage 3 epoch-wise losses saved to {filename}."
+    )
+
     filename = f"{basedir}/{runtime}_combined_stats.csv"
     cmb_stats.reset_index().to_csv(filename, index=False)
     logger.info(
         f"{datetime.now()}: Stage 3 training statistics saved to {filename}."
+    )
+
+    filename = f"{basedir}/{runtime}_test_df.csv"
+    test.reset_index().to_csv(filename, index=False)
+    logger.info(
+        f"{datetime.now()}: Testing dataset for inference saved to {filename}."
     )
 
     return
@@ -178,7 +216,13 @@ def main(
 
 if __name__=="__main__":
     parser = ArgumentParser(
-        description = "Train the FuNVol neural SDE on a given dataset."
+        description = (
+            "Train the FuNVol neural SDE on a given dataset. This entire "
+            "subroutine outputs optimal weights, per-epoch loss, training "
+            "statistics, and a test dataset as artefacts; the latter used for "
+            "subsequent inference. Optimal weight tensors can simply be "
+            "reloaded using PyTorch, with the same neural model spec used here."
+        )
     )
 
     parser.add_argument(

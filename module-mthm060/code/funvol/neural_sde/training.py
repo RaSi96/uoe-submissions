@@ -66,17 +66,10 @@ def train_stage_1(
         n_epochs: np.ndarray,
         loader: DataLoader,
         device: torch.device,
-    ) -> tuple[NeuralSDE, list[float], list[dict]]:
+    ) -> tuple[NeuralSDE, dict[int, float], list[dict]]:
     """
     Trains drift only. Returns model, epoch_losses, weight_stats.
     """
-    if n_epochs <= 0:
-        # is someone trying something funny?
-        raise ValueError(
-            f"{datetime.now()}: `n_epochs` must be greater than 0, received "
-            f"`{n_epochs}` instead."
-        )
-
     if len(loader) <= 0:
         # is someone trying something funnier?
         raise ValueError(
@@ -89,8 +82,8 @@ def train_stage_1(
         lr=1e-3,
     )
 
-    epoch_losses = []
-    weight_stats = []
+    epoch_losses = {}  # 1000 epochs = 1000 items
+    weight_stats = []  # 1000 epochs x 7 drift layers = 7000 items
 
     model.train()
 
@@ -111,7 +104,7 @@ def train_stage_1(
             running_loss += loss
 
         epoch_loss = running_loss / len(loader)
-        epoch_losses.append(epoch_loss)
+        epoch_losses[epoch] = epoch_loss
 
         if epoch % 10 == 0:
             logger.info(
@@ -132,7 +125,7 @@ def train_stage_2(
         n_epochs: np.ndarray,
         loader: DataLoader,
         device: torch.device,
-    ) -> tuple[NeuralSDE, list[float], list[dict], float]:
+    ) -> tuple[NeuralSDE, dict[int, float], list[dict], float]:
     """
     Trains diffusion only. Returns model, epoch_losses, weight_stats, alpha.
     """
@@ -163,8 +156,8 @@ def train_stage_2(
         lr=1e-3,
     )
 
-    epoch_losses = []
-    weight_stats = []
+    epoch_losses = {}  # 1000 epochs = 1000 items
+    weight_stats = []  # 1000 epochs x 7 diffn layers = 7000 items
 
     model.train()
 
@@ -191,7 +184,7 @@ def train_stage_2(
             running_loss += loss
 
         epoch_loss = running_loss / len(loader)
-        epoch_losses.append(epoch_loss)
+        epoch_losses[epoch] = epoch_loss
 
         if epoch % 10 == 0:
             logger.info(
@@ -217,7 +210,7 @@ def train_stage_3(
         loader: DataLoader,
         alpha: float,
         device: torch.device,
-    ) -> tuple[NeuralSDE, list[float], list[dict]]:
+    ) -> tuple[NeuralSDE, dict[int, float], list[dict]]:
     """
     Trains drift & diffusion. Returns model, epoch_losses, weight_stats.
     """
@@ -245,8 +238,8 @@ def train_stage_3(
         lr=1e-3,
     )
 
-    epoch_losses = []
-    weight_stats = []
+    epoch_losses = {}  # 1000 epochs = 1000 items
+    weight_stats = []  # 1000 epochs x (7x2) drift & diffn layers = 14000 items
 
     model.train()
 
@@ -272,7 +265,7 @@ def train_stage_3(
             running_loss += loss
 
         epoch_loss = running_loss / len(loader)
-        epoch_losses.append(epoch_loss)
+        epoch_losses[epoch] = epoch_loss
 
         if epoch % 10 == 0:
             logger.info(
