@@ -86,11 +86,10 @@ def main(
 
     train_dataset = NeuralSDEDataset(train)
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=False)
+    logger.info(f"{datetime.now()}: Prepared training dataloader.")
 
     # test_dataset = NeuralSDEDataset(test)
-    # test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
-
-    logger.info(f"{datetime.now()}: Prepared dataloaders.")
+    # test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
     # --------------------------------------------------------------------------
 
