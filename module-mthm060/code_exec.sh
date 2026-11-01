@@ -32,7 +32,7 @@ funvol_fpca() {
         --data_reserve=./code/funvol/legendre/artefacts
 }
 
-detrended_price() {
+detrend_price() {
     python -m code.funvol.detrended_price.main \
         --data_reserve=./code/data/nifty-daily.csv
 }
@@ -84,7 +84,7 @@ else
             funvol_fpca
             ;;
         --detrend_price)
-            detrended_price
+            detrend_price
             ;;
         --neural_sde_ce)
             neural_sde_ce
