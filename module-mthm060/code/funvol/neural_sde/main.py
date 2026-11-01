@@ -19,7 +19,6 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-
 rng = np.random.default_rng(seed=42)
 
 # ------------------------------------------------------------------------------
