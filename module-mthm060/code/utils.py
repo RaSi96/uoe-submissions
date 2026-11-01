@@ -36,6 +36,12 @@ def get_file_list(
 
     Returns a list of Path-qualified filepaths.
     """
+    if not isinstance(basedir, (Path, str)):
+        raise ValueError(
+            f"{datetime.now()}: Expected argument `basedir` to be a valid path "
+            f"or string, but received `{type(basedir)}` instead."
+        )
+
     _basedir = Path(basedir)
     files = list(_basedir.rglob(glob))
     logger.info(f"{datetime.now()}: Found {len(files)} files.")
