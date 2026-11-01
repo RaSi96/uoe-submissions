@@ -9,7 +9,7 @@ With this approach, there are clear start and end points for each section of the
 
 ![Diagrammatic representation of data & code flow, for my entire dissertation. Each rectangular box is one Python module. The leftmost databases seed the pipeline; each module writes to disk its corresponding processed data artefacts.](./codeflow.svg){#fig:code_flow}
 
-If you, dear reader, source my Bhavcopy data from [my Kaggle upload](https://www.kaggle.com/datasets/rasi96/nse-f-and-o-bhavcopies-2010-2019), then you should get a folder named `nse_bhavs`. The assumed folder structure for this entire pipeline is as follows (assuming we start in the current folder, `./code`):
+The assumed folder structure for this entire pipeline is as follows (assuming we start in the current folder, `./code`):
 
 ```
 code/
@@ -23,4 +23,4 @@ code/
     ssvi/
 ```
 
-The CSVs `nifty-daily`, `nifty-div-yields`, `nifty-vix` are provided by me exactly as used. If you, dear reader, would prefer fresher data,  it will have to be sourced from other locations; most straightforwardly from the ones mentioned in §1.2 of my thesis.
+You, dear reader, may source the folder `nse_bhavs/` from [my Kaggle upload](https://www.kaggle.com/datasets/rasi96/nse-f-and-o-bhavcopies-2010-2019). The CSVs `nifty-daily`, `nifty-div-yields`, `nifty-vix` are provided by me exactly as used. If you prefer fresher data, then the most straightforward sources are those mentioned in §1.2 of my thesis.

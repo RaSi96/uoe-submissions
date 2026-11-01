@@ -33,3 +33,30 @@ Finally, note that with Arial as the official font (and without margin adjustmen
 
 # Other Links
 As mentioned in my thesis, all my source data was collected by me and made available on my [Kaggle](https://www.kaggle.com/datasets/rasi96/nse-f-and-o-bhavcopies-2010-2019).
+
+# Running Code
+The file `code_exec.sh` contains the Python commands needed to run the entire pipeline within the `code/` folder. For more information about pipeline architecture and datasets, please read the `README.md` inside `code/`.
+
+1. After cloning this repo, ensure `code_exec.sh` is executable:
+    ```bash
+    $> chmod 744 ./code_exec.sh
+    ```
+
+2. To run the entire pipeline, simply execute `./code_exec.sh`:
+    ```bash
+    $> ./code_exec.sh
+    ```
+
+3. To run a specific stage of the pipeline (IV inversion only, SSVI only, FPCA only, etc.), pass that stage's name to `./code_exec.sh`:
+    ```bash
+    $> ./code_exec.sh --invert_iv       # or
+    $> ./code_exec.sh --ssvi            # or
+    $> ./code_exec.sh --option_metrics  # or
+    $> ./code_exec.sh --legendre        # or
+    $> ./code_exec.sh --funvol_fpca     # or
+    $> ./code_exec.sh --detrend_price   # or
+    $> ./code_exec.sh --neural_sde_ce   # or
+    $> ./code_exec.sh --neural_sde_pe
+    ```
+
+    Note that, as explained in `./code/README.md`, each stage of the pipeline requires a particular artefact from the preceding stage, starting with a set of Nifty 50 Bhavcopies. Please see the `README.md` in the `code/` folder for more information.
