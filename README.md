@@ -1,11 +1,11 @@
 # UOE Submissions
 <p align="center">
-    Dedicated also to my late father, my papa bear, Satish Singh (26th August 1969 - 01 July 2026).
+    <b>
+    Dedicated to my late father, my papa bear, Satish Singh (26th August 1969 - 01 July 2026).
+    </b>
 </p>
 
-This repository houses my submissions & work whilst pursuing my [MSc in Mathematical Finance](https://www.exeter.ac.uk/study/postgraduate/courses/mathematics/finmathsmsc) from the Department of Mathematics at the University of Exeter, 2025-2026. This work is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en).
-
-Don't hate the integrator, hate the integrand.
+This repository houses my submissions & work whilst pursuing my [MSc in Mathematical Finance](https://www.exeter.ac.uk/study/postgraduate/courses/mathematics/finmathsmsc) from the Department of Mathematics at the University of Exeter, 2025-2026. This work is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en). Don't hate the integrator, hate the integrand.
 
 ## Module Legend
 
