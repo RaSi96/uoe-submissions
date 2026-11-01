@@ -1,6 +1,8 @@
 # UOE Submissions
 Dedicated to my submissions & work whilst pursuing my [MSc in Mathematical Finance](https://www.exeter.ac.uk/study/postgraduate/courses/mathematics/finmathsmsc) from the Department of Mathematics at the University of Exeter, 2025-2026. This work is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en).
 
+Dedicated also to my late father, my papa bear, Satish Singh (26th August 1969 -- 01 July 2026).
+
 Don't hate the integrator, hate the integrand.
 
 ## Module Legend
@@ -11,7 +13,7 @@ Don't hate the integrator, hate the integrand.
 | [MTHM003](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM003&ay=2025&sys=1) | Analysis and Computation for Finance            | Core     | 96% | 87% | N/A  | 62%         |
 | [MTHM006](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM006&ay=2025&sys=1) | Mathematical Theory of Option Pricing           | Core     | 88% | 85% | N/A  | 66%         |
 | [MTHM059](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM059&ay=2025&sys=1) | Case Studies in Mathematical Finance            | Core     | 91% | 93% | 85%  | 89%         |
-| [MTHM060](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM060&ay=2025&sys=1) | Actuarial and Mathematical Finance Dissertation | Core     | N/A | N/A | N/A  |             |
+| [MTHM060](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=MTHM060&ay=2025&sys=1) | Actuarial and Mathematical Finance Dissertation | Core     | N/A | N/A | N/A  | 69%         |
 | [BEAM047](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM047&sys=0)         | Fundamentals of Financial Management            | Core     | N/A | N/A | N/A  | 75%         |
 | [BEEM012](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEEM012&sys=0)         | Applied Econometrics 2                          | Elective | 93% | 96% | 100% | 97%         |
 | [BEAM035](https://www.exeter.ac.uk/study/studyinformation/modules/info/?moduleCode=BEAM035&sys=0)         | Derivatives Pricing                             | Elective | N/A | N/A | N/A  | 92%         |
