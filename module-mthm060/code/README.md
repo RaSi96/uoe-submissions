@@ -23,4 +23,4 @@ code/
     ssvi/
 ```
 
-The CSVs `nifty-daily`, `nifty-div-yields`, `nifty-vix` will have to be sourced from other locations, most straightforwardly the ones mentioned in §1.2 of my thesis.
+The CSVs `nifty-daily`, `nifty-div-yields`, `nifty-vix` are provided by me exactly as used. If you, dear reader, would prefer fresher data,  it will have to be sourced from other locations; most straightforwardly from the ones mentioned in §1.2 of my thesis.
